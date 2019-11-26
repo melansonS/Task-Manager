@@ -1,19 +1,135 @@
-let express = require('express')
-let app = express()
-let reloadMagic = require('./reload-magic.js')
+let express = require("express");
+let app = express();
+let multer = require("multer");
+let upload = multer({ dest: __dirname + "/uploads" });
+let MongoClient = require("mongodb").MongoClient;
+let ObjectID = require("mongodb").ObjectID;
+let cookieParser = require("cookie-parser");
+let reloadMagic = require("./reload-magic.js");
 
-reloadMagic(app)
+app.use(cookieParser());
+reloadMagic(app);
+//mongo set up ====
+let dbo;
+let url =
+  "mongodb+srv://bob:bobsue@cluster0-dhphy.mongodb.net/test?retryWrites=true&w=majority";
+app.use("/", express.static("build"));
 
-app.use('/', express.static('build')); // Needed for the HTML and JS files
-app.use('/', express.static('public')); // Needed for local assets
+MongoClient.connect(url, { useUnifiedTopology: true }, (err, db) => {
+  dbo = db.db("task-manager");
+});
+//===
+app.use("/", express.static("build")); // Needed for the HTML and JS files
+app.use("/", express.static("public")); // Needed for local assets
+
+let generateSID = () => {
+  return Math.floor(Math.random() * 100000000);
+};
 
 // Your endpoints go after this line
+app.post("/signup", upload.none(), (req, res) => {
+  console.log("SINGUP HIT========");
+  let username = req.body.username;
+  let password = req.body.password;
+  let email = req.body.email;
+  dbo.collection("users").findOne({ username }, (err, user) => {
+    if (user !== null) {
+      console.log("username taken");
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (err) {
+      console.log("signup err;", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    dbo.collection("users").insertOne({ username, email, password });
+    res.send(JSON.stringify({ success: true }));
+  });
+});
 
+app.post("/login", upload.none(), (req, res) => {
+  console.log("LOGIN HIT================");
+  let username = req.body.username;
+  let givenPassword = req.body.password;
+  console.log("credentials:", username, ",", givenPassword);
+  dbo.collection("users").findOne({ username }, (err, user) => {
+    if (err) {
+      console.log("Login err:", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (user === null) {
+      console.log("user not found...");
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (user.password === givenPassword) {
+      let sid = generateSID();
+      dbo.collection("cookies").insertOne({ sid, username });
+      res.cookie("sid", sid);
+      res.send(JSON.stringify({ success: true }));
+      return;
+    }
+    console.log("DEFAULT RESPONSE");
+    res.send(JSON.stringify({ success: false }));
+  });
+});
+
+app.post("/auto-login", upload.none(), (req, res) => {
+  console.log("auto loggin hit===========");
+  let sid = parseInt(req.cookies.sid);
+  console.log("COOKIE:", sid);
+  dbo.collection("cookies").findOne({ sid }, (err, user) => {
+    if (err) {
+      console.log("autologin err:", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (user === null) {
+      res.send(JSON.stringify({ success: false, user: "null" }));
+      return;
+    }
+    res.send(JSON.stringify({ success: true, user }));
+    return;
+  });
+});
+app.post("/logout", upload.none(), (req, res) => {
+  console.log("logoutHit");
+  let sid = parseInt(req.cookies.sid);
+  dbo.collection("cookies").deleteOne({ sid }, (err, sid) => {
+    if (err) {
+      console.log("cookie deletion error:", err);
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    if (sid === null) {
+      console.log("sid null...");
+      res.send(JSON.stringify({ success: false }));
+      return;
+    }
+    res.send(JSON.stringify({ success: true }));
+  });
+});
+app.get("/test", upload.none(), (req, res) => {
+  dbo
+    .collection("users")
+    .find({})
+    .toArray((err, test) => {
+      if (err) {
+        console.log("Error getting product list", err);
+        return res.send(JSON.stringify({ success: false }));
+      }
+      return res.send(JSON.stringify({ test }));
+    });
+});
 // Your endpoints go before this line
 
-app.all('/*', (req, res, next) => { // needed for react router
-    res.sendFile(__dirname + '/build/index.html');
-})
+app.all("/*", (req, res, next) => {
+  // needed for react router
+  res.sendFile(__dirname + "/build/index.html");
+});
 
-
-app.listen(4000, '0.0.0.0', () => { console.log("Server running on port 4000") })
+app.listen(4000, "0.0.0.0", () => {
+  console.log("Server running on port 4000");
+});

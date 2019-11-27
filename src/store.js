@@ -2,16 +2,16 @@ import { createStore } from "redux";
 
 let reducer = (state, action) => {
   if (action.type === "login-success") {
-    return { ...state, isLoggedIn: true };
+    return { ...state, isLoggedIn: true, userData: action.user };
   }
   if (action.type === "logout") {
-    return { ...state, isLoggedIn: false };
+    return { ...state, isLoggedIn: false, userData: {} };
   }
 
   return state;
 };
 
-let initialState = { isLoggedIn: false };
+let initialState = { isLoggedIn: false, userData: {} };
 
 let store = createStore(
   reducer,

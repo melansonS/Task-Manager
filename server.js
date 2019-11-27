@@ -33,17 +33,20 @@ app.post("/signup", upload.none(), (req, res) => {
   let password = req.body.password;
   let email = req.body.email;
   dbo.collection("users").findOne({ username }, (err, user) => {
-    if (user !== null) {
-      console.log("username taken");
-      res.send(JSON.stringify({ success: false }));
-      return;
-    }
     if (err) {
       console.log("signup err;", err);
       res.send(JSON.stringify({ success: false }));
       return;
     }
+    if (user !== null) {
+      console.log("username taken");
+      res.send(JSON.stringify({ success: false, usernameTake: true }));
+      return;
+    }
     dbo.collection("users").insertOne({ username, email, password });
+    let sid = generateSID();
+    dbo.collection("cookies").insertOne({ sid, username });
+    res.cookie("sid", sid);
     res.send(JSON.stringify({ success: true }));
   });
 });
@@ -68,7 +71,7 @@ app.post("/login", upload.none(), (req, res) => {
       let sid = generateSID();
       dbo.collection("cookies").insertOne({ sid, username });
       res.cookie("sid", sid);
-      res.send(JSON.stringify({ success: true }));
+      res.send(JSON.stringify({ success: true, user }));
       return;
     }
     console.log("DEFAULT RESPONSE");
@@ -80,18 +83,25 @@ app.post("/auto-login", upload.none(), (req, res) => {
   console.log("auto loggin hit===========");
   let sid = parseInt(req.cookies.sid);
   console.log("COOKIE:", sid);
-  dbo.collection("cookies").findOne({ sid }, (err, user) => {
+  dbo.collection("cookies").findOne({ sid }, (err, sid) => {
     if (err) {
       console.log("autologin err:", err);
       res.send(JSON.stringify({ success: false }));
       return;
     }
-    if (user === null) {
-      res.send(JSON.stringify({ success: false, user: "null" }));
+    if (sid === null) {
+      res.send(JSON.stringify({ success: false, sid: "null" }));
       return;
     }
-    res.send(JSON.stringify({ success: true, user }));
-    return;
+    if (sid !== null) {
+      console.log("sid user ->", sid.username);
+      dbo
+        .collection("users")
+        .findOne({ username: sid.username }, (err, user) => {
+          res.send(JSON.stringify({ success: true, user }));
+        });
+      return;
+    }
   });
 });
 app.post("/logout", upload.none(), (req, res) => {
@@ -110,18 +120,6 @@ app.post("/logout", upload.none(), (req, res) => {
     }
     res.send(JSON.stringify({ success: true }));
   });
-});
-app.get("/test", upload.none(), (req, res) => {
-  dbo
-    .collection("users")
-    .find({})
-    .toArray((err, test) => {
-      if (err) {
-        console.log("Error getting product list", err);
-        return res.send(JSON.stringify({ success: false }));
-      }
-      return res.send(JSON.stringify({ test }));
-    });
 });
 // Your endpoints go before this line
 

@@ -25,13 +25,14 @@ class UnconnectedLogin extends Component {
     body = JSON.parse(body);
     if (body.success) {
       console.log("logging in!");
-      this.props.dispatch({ type: "login-success" });
+      this.props.dispatch({ type: "login-success", user: body.user });
     }
     console.log("response body:", body);
   };
   render() {
     return (
       <div>
+        <h3>Login</h3>
         <form onSubmit={this.handleSubmit}>
           Username:
           <input

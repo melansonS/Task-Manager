@@ -3,9 +3,9 @@ import { BrowserRouter, Route } from "react-router-dom";
 import { connect } from "react-redux";
 import Login from "./Login.jsx";
 import Signup from "./Signup.jsx";
+import Navbar from "./Navbar.jsx";
 class UnonnectedApp extends Component {
   componentDidMount() {
-    //this.runTest();
     this.autoLoggin();
   }
   autoLoggin = async () => {
@@ -17,54 +17,47 @@ class UnonnectedApp extends Component {
     body = JSON.parse(body);
     console.log("AutoLogin:", body);
     if (body.success) {
-      this.props.dispatch({ type: "login-success" });
+      this.props.dispatch({ type: "login-success", user: body.user });
     }
   };
-  runTest = async () => {
-    console.log("running test");
-    let response = await fetch("/test", { method: "GET" });
-    let body = await response.text();
-    // body = JSON.parse(body);
-    console.log("response body:", body);
-  };
-  handleLogout = async event => {
-    let response = await fetch("/logout", {
-      method: "POST",
-      credentials: "include"
-    });
-    let body = await response.text();
-    body = JSON.parse(body);
-    if (body.success) {
-      console.log("loggin out");
-      this.props.dispatch({ type: "logout" });
-    } else {
-      window.alert("something went wrong...");
-    }
-  };
+
   render = () => {
-    return (
-      <BrowserRouter>
-        <div>Howdy</div>
-        {this.props.loggedIn && (
-          <div>
-            Login success!<button onClick={this.handleLogout}>Log out</button>
-          </div>
-        )}
-        <Route path="/login" exact={true}>
-          <div>Login</div>
+    if (!this.props.loggedIn) {
+      return (
+        <BrowserRouter>
           <Login></Login>
-        </Route>
-        <Route path="/signup" exact={true}>
-          <div>Signup:</div>
-          <Signup></Signup>
-        </Route>
-      </BrowserRouter>
-    );
+          <Route path="/signup" exact={true}>
+            <Signup></Signup>
+          </Route>
+        </BrowserRouter>
+      );
+    } else {
+      return (
+        <BrowserRouter>
+          <Navbar></Navbar>
+          <Route path="/home" exact={true}>
+            <div>
+              <h1>HOMEPAGE</h1>
+            </div>
+          </Route>
+          <Route path="/projects" exact={true}>
+            <div>Projects!</div>
+          </Route>
+          <Route path="/todo" exact={true}>
+            <div>Todo!</div>
+          </Route>
+          <Route path="/search" exact={true}>
+            <div>Searching...</div>
+          </Route>
+        </BrowserRouter>
+      );
+    }
   };
 }
 let mapStateToProps = st => {
   return {
-    loggedIn: st.isLoggedIn
+    loggedIn: st.isLoggedIn,
+    user: st.userData
   };
 };
 let App = connect(mapStateToProps)(UnonnectedApp);

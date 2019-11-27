@@ -31,12 +31,25 @@ class UnconnectedSignup extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("signup response body:", body);
+    if (body.success) {
+      console.log("signup successful!");
+      let user = {
+        username: this.state.username,
+        password: this.state.password,
+        email: this.state.email
+      };
+      this.props.dispatch({ type: "login-success", user });
+    } else if (body.usernameTake) {
+      window.alert("Username already in use!");
+    } else {
+      window.alert("Something went wrong...");
+    }
   };
 
   render() {
     return (
       <div>
+        <h3>Signup</h3>
         <form onSubmit={this.handleSubmit}>
           Username:
           <input

@@ -121,6 +121,29 @@ app.post("/logout", upload.none(), (req, res) => {
     res.send(JSON.stringify({ success: true }));
   });
 });
+
+app.post("/new-project", upload.none(), (req, res) => {
+  console.log("NEW-PROJECT HIT=======");
+  let username = req.body.username;
+  let title = req.body.title;
+  let description = req.body.description;
+  let tags = req.body.tags.split(" ");
+  let color = req.body.color;
+  let creationDate = new Date().toDateString();
+  console.log(
+    "u:",
+    username,
+    "t:",
+    title,
+    "d:",
+    description,
+    "tags:",
+    tags,
+    "c:",
+    color
+  );
+  res.send(JSON.stringify({ success: "in progress.." }));
+});
 // Your endpoints go before this line
 
 app.all("/*", (req, res, next) => {

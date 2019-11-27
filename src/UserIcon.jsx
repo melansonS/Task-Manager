@@ -46,7 +46,7 @@ class UnconnectedUserIcon extends Component {
         </div>
         {this.state.showMenu && (
           <div className="icon-menu">
-            <div>
+            <div className="icon-menu-header">
               <h4>User Icon Menu</h4>
               <button onClick={this.handleMenuClose}>x</button>
             </div>

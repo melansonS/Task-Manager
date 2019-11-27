@@ -23,14 +23,16 @@ class UnconnectNavbar extends Component {
 
   render() {
     return (
-      <div>
+      <div className="navbar">
         <UserIcon></UserIcon>
-        <Link to="/projects">
-          <div>Projects</div>
-        </Link>
-        <Link to="/todo">
-          <div>Todo</div>
-        </Link>
+        <div className="navbar-buttons">
+          <Link to="/projects">
+            <div>Projects</div>
+          </Link>
+          <Link to="/todo">
+            <div>Todo</div>
+          </Link>
+        </div>
         <Link to="/home">
           <img
             src="\img\placeholder.com-logo3.png"

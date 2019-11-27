@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import Login from "./Login.jsx";
 import Signup from "./Signup.jsx";
 import Navbar from "./Navbar.jsx";
+import ProjectsPage from "./ProjectsPage.jsx";
 class UnonnectedApp extends Component {
   componentDidMount() {
     this.autoLoggin();
@@ -41,7 +42,7 @@ class UnonnectedApp extends Component {
             </div>
           </Route>
           <Route path="/projects" exact={true}>
-            <div>Projects!</div>
+            <ProjectsPage></ProjectsPage>
           </Route>
           <Route path="/todo" exact={true}>
             <div>Todo!</div>

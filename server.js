@@ -43,7 +43,9 @@ app.post("/signup", upload.none(), (req, res) => {
       res.send(JSON.stringify({ success: false, usernameTake: true }));
       return;
     }
-    dbo.collection("users").insertOne({ username, email, password });
+    dbo
+      .collection("users")
+      .insertOne({ username, email, password, projects: {} });
     let sid = generateSID();
     dbo.collection("cookies").insertOne({ sid, username });
     res.cookie("sid", sid);
@@ -130,19 +132,90 @@ app.post("/new-project", upload.none(), (req, res) => {
   let tags = req.body.tags.split(" ");
   let color = req.body.color;
   let creationDate = new Date().toDateString();
-  console.log(
-    "u:",
-    username,
-    "t:",
-    title,
-    "d:",
-    description,
-    "tags:",
-    tags,
-    "c:",
-    color
+  dbo.collection("projects").insertOne(
+    {
+      admin: [username],
+      users: [],
+      title,
+      description,
+      tags,
+      color,
+      creationDate,
+      tasks: {}
+    },
+    (err, proj) => {
+      console.log("project", proj.ops[0]._id);
+      let projectId = proj.ops[0]._id;
+      dbo.collection("users").findOne({ username }, (err, user) => {
+        console.log("user projects:", user.projects);
+        let projectObj = user.projects;
+        projectObj[projectId] = "admin";
+        console.log("new user projects obj :", projectObj);
+        dbo
+          .collection("users")
+          .updateOne({ username }, { $set: { projects: projectObj } });
+      });
+    }
   );
+
   res.send(JSON.stringify({ success: "in progress.." }));
+});
+
+app.post("/get-projects", upload.none(), (req, res) => {
+  console.log("GET PROJECTS HIT======");
+  let ids = req.body.projectIds;
+  ids = ids.split(",");
+  ids = ids.map(id => {
+    return ObjectID(id);
+  });
+  dbo
+    .collection("projects")
+    .find({ _id: { $in: ids } })
+    .toArray((err, userProjects) => {
+      if (err) {
+        console.log("get projects err:", err);
+        return res.send(JSON.stringify({ success: false }));
+      }
+      return res.send(JSON.stringify({ success: true, userProjects }));
+    });
+  console.log("IDS;", ids);
+});
+
+app.post("/add-user", upload.none(), (req, res) => {
+  console.log("ADD-USER HIT====");
+  let id = req.body.projectId;
+  let username = req.body.username;
+  let userId = "";
+  console.log("username:", username, " - pid:", id);
+  dbo.collection("users").findOne({ username }, (err, user) => {
+    if (err) {
+      console.log("add user err..:", err);
+      return res.send(JSON.parse({ success: false }));
+    }
+    if (user === null) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    //if (true) for testing go back to --> if (user.projects[id] === undefined) <-- after testing
+    if (user.projects[id] === undefined) {
+      userId = user._id;
+      let projectObj = user.projects;
+      projectObj[id] = "user";
+      console.log("new user projects obj :", projectObj);
+      dbo
+        .collection("users")
+        .updateOne({ username }, { $set: { projects: projectObj } });
+      dbo
+        .collection("projects")
+        .updateOne({ _id: ObjectID(id) }, { $push: { users: username } });
+      res.send(JSON.stringify({ success: true }));
+      return;
+    }
+    console.log("project already listed...");
+    res.send(
+      JSON.stringify({ success: false, comment: "project already listed" })
+    );
+  });
+  //res.send(JSON.stringify({ success: "in progress" }));
 });
 // Your endpoints go before this line
 

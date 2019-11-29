@@ -1,12 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import Signup from "./Signup.jsx";
 
 class UnconnectedLogin extends Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      signup: false
     };
   }
   handleUsernameChange = event => {
@@ -29,6 +31,12 @@ class UnconnectedLogin extends Component {
     }
     console.log("response body:", body);
   };
+  openSignup = event => {
+    this.setState({ signup: true });
+  };
+  closeSignup = () => {
+    this.setState({ signup: false });
+  };
   render() {
     return (
       <div>
@@ -48,6 +56,13 @@ class UnconnectedLogin extends Component {
           ></input>
           <input type="submit"></input>
         </form>
+        <button onClick={this.openSignup}>Signup</button>
+        {this.state.signup && (
+          <div>
+            <button onClick={this.closeSignup}>x</button>
+            <Signup></Signup>
+          </div>
+        )}
       </div>
     );
   }

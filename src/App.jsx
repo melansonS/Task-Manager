@@ -5,6 +5,7 @@ import Login from "./Login.jsx";
 import Signup from "./Signup.jsx";
 import Navbar from "./Navbar.jsx";
 import ProjectsPage from "./ProjectsPage.jsx";
+import ProjectHub from "./ProjectHub.jsx";
 class UnonnectedApp extends Component {
   componentDidMount() {
     this.autoLoggin();
@@ -20,6 +21,10 @@ class UnonnectedApp extends Component {
     if (body.success) {
       this.props.dispatch({ type: "login-success", user: body.user });
     }
+  };
+  renderProjectHub = routerData => {
+    let id = routerData.match.params.projectId;
+    return <ProjectHub id={id}></ProjectHub>;
   };
 
   render = () => {
@@ -50,6 +55,11 @@ class UnonnectedApp extends Component {
           <Route path="/search" exact={true}>
             <div>Searching...</div>
           </Route>
+          <Route
+            path="/project/:projectId"
+            exact={true}
+            render={this.renderProjectHub}
+          ></Route>
         </BrowserRouter>
       );
     }

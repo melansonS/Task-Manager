@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import ProjectCard from "./ProjectCard.jsx";
 
 class UnconnectedProjectsPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      adminProjects: [],
+      userProjects: [],
       showStartProjectForm: false,
       newProjectTitle: "",
       newProjectDescription: "",
@@ -12,6 +15,33 @@ class UnconnectedProjectsPage extends Component {
       newProjectColor: "#87c8d4"
     };
   }
+  componentDidMount() {
+    if (Object.keys(this.props.user.projects)[0] !== undefined) {
+      this.getProjects();
+    }
+  }
+
+  getProjects = async () => {
+    console.log("Getting user's projects:", this.props.user.projects);
+    let projectIds = Object.keys(this.props.user.projects);
+    let data = new FormData();
+    data.append("projectIds", projectIds);
+    let response = await fetch("/get-projects", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    let adminProjects = body.userProjects.filter(project => {
+      return project.admin.includes(this.props.user.username);
+    });
+    console.log("adminProjects:", adminProjects);
+    let userProjects = body.userProjects.filter(project => {
+      return project.users.includes(this.props.user.username);
+    });
+    console.log("userProjects", userProjects);
+    this.setState({ adminProjects, userProjects });
+
+    console.log("projects in the sate:", this.state.projects);
+  };
+
   handleStartProject = () => {
     console.log("startprojectClick");
     this.setState({ showStartProjectForm: true });
@@ -47,11 +77,24 @@ class UnconnectedProjectsPage extends Component {
   };
 
   render() {
+    let adminProjectCardElems = this.state.adminProjects.map(proj => {
+      return <ProjectCard project={proj}></ProjectCard>;
+    });
+    let userProjectCardElems = this.state.userProjects.map(proj => {
+      return <ProjectCard project={proj}></ProjectCard>;
+    });
     return (
       <div>
-        <h1>Your Projects!</h1>
+        <div>
+          <h1>Admin Projects</h1>
+          {adminProjectCardElems}
+        </div>
+        <div>
+          <h3>User projects</h3>
+          {userProjectCardElems}
+        </div>
         <button onClick={this.handleStartProject}>
-          Start a new project! +{" "}
+          Start a new project! +
         </button>
         {this.state.showStartProjectForm && (
           <div>

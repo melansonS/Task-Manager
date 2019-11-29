@@ -6,6 +6,7 @@ import Signup from "./Signup.jsx";
 import Navbar from "./Navbar.jsx";
 import ProjectsPage from "./ProjectsPage.jsx";
 import ProjectHub from "./ProjectHub.jsx";
+import TaskPage from "./TaskPage.jsx";
 class UnonnectedApp extends Component {
   componentDidMount() {
     this.autoLoggin();
@@ -22,9 +23,23 @@ class UnonnectedApp extends Component {
       this.props.dispatch({ type: "login-success", user: body.user });
     }
   };
-  renderProjectHub = routerData => {
-    let id = routerData.match.params.projectId;
-    return <ProjectHub id={id}></ProjectHub>;
+  renderProjectHubOrTaskPage = routerData => {
+    let id = routerData.match.params.projectId.split("-");
+    let projectId = id[0];
+    let taskName = id[1];
+    console.log("pid:", projectId, " taskName:", taskName);
+    if (
+      this.props.user.projects[projectId] !== undefined &&
+      taskName === undefined
+    ) {
+      return <ProjectHub id={id}></ProjectHub>;
+    }
+    if (
+      this.props.user.projects[projectId] !== undefined &&
+      taskName !== undefined
+    ) {
+      return <TaskPage projectId={projectId} taskName={taskName}></TaskPage>;
+    } else return <div>Invalid url...</div>;
   };
 
   render = () => {
@@ -58,7 +73,7 @@ class UnonnectedApp extends Component {
           <Route
             path="/project/:projectId"
             exact={true}
-            render={this.renderProjectHub}
+            render={this.renderProjectHubOrTaskPage}
           ></Route>
         </BrowserRouter>
       );

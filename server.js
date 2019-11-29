@@ -19,6 +19,7 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, db) => {
   dbo = db.db("task-manager");
 });
 //===
+app.use("/images", express.static("uploads")); //Needed to access the files in the uploads folder
 app.use("/", express.static("build")); // Needed for the HTML and JS files
 app.use("/", express.static("public")); // Needed for local assets
 
@@ -141,7 +142,7 @@ app.post("/new-project", upload.none(), (req, res) => {
       tags,
       color,
       creationDate,
-      tasks: {}
+      tasks: []
     },
     (err, proj) => {
       console.log("project", proj.ops[0]._id);
@@ -187,6 +188,7 @@ app.post("/add-user", upload.none(), (req, res) => {
   let username = req.body.username;
   let userId = "";
   console.log("username:", username, " - pid:", id);
+  //finds the user object based on the given username
   dbo.collection("users").findOne({ username }, (err, user) => {
     if (err) {
       console.log("add user err..:", err);
@@ -195,15 +197,17 @@ app.post("/add-user", upload.none(), (req, res) => {
     if (user === null) {
       return res.send(JSON.stringify({ success: false }));
     }
-    //if (true) for testing go back to --> if (user.projects[id] === undefined) <-- after testing
+    //if the project isn't already listed in the user's projects object
     if (user.projects[id] === undefined) {
       userId = user._id;
       let projectObj = user.projects;
       projectObj[id] = "user";
       console.log("new user projects obj :", projectObj);
+      //set the users projects to the new obj containing the added project
       dbo
         .collection("users")
         .updateOne({ username }, { $set: { projects: projectObj } });
+      //update the users array of the project to include the username of the new user
       dbo
         .collection("projects")
         .updateOne({ _id: ObjectID(id) }, { $push: { users: username } });
@@ -211,11 +215,82 @@ app.post("/add-user", upload.none(), (req, res) => {
       return;
     }
     console.log("project already listed...");
-    res.send(
-      JSON.stringify({ success: false, comment: "project already listed" })
-    );
+    res.send(JSON.stringify({ success: false }));
   });
-  //res.send(JSON.stringify({ success: "in progress" }));
+});
+
+app.post("/new-task", upload.array("files"), (req, res) => {
+  console.log("NEW-TASK HIT==");
+  let author = req.body.author;
+  let pid = req.body.projectId;
+  let title = req.body.title;
+  let description = req.body.description;
+  let tags = req.body.tags.split(" ");
+  let files = req.files;
+  let posts = [];
+  let type = "task";
+  let status = "new";
+  let creationDate = new Date().toLocaleDateString();
+  let asignees = [];
+  let watchers = [];
+  let comments = [];
+  //get the frontend path for each of the uplaoded files.
+  if (files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      console.log("Uploaded file " + files[i]);
+      let frontendPath = "/images/" + files[i].filename;
+      posts.push(frontendPath);
+    }
+  }
+  let newTask = {
+    author,
+    title,
+    description,
+    tags,
+    posts,
+    type,
+    status,
+    creationDate,
+    asignees,
+    watchers,
+    comments
+  };
+  console.log("new task!:", newTask);
+  dbo
+    .collection("projects")
+    .updateOne(
+      { _id: ObjectID(pid) },
+      { $push: { tasks: newTask } },
+      (err, task) => {
+        if (err) {
+          console.log("new-task err:", err);
+          return res.send(JSON.stringify({ success: false }));
+        }
+        res.send(JSON.stringify({ success: "in progress..." }));
+        console.log("TASK:", task);
+      }
+    );
+});
+
+app.post("/task-data", upload.none(), (req, res) => {
+  console.log("TASK-DATA HIT==");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  console.log("pid:", pid, " task name:", taskName);
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      console.log("taskdata err:", err);
+      return res.send(JSON.stringify({ success: false }));
+    }
+    if (project === null) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let querriedTask = project.tasks.filter(task => {
+      return task.title === taskName;
+    });
+    res.send(JSON.stringify({ success: true, taskData: querriedTask[0] }));
+  });
+  //   res.send(JSON.stringify({ success: "inprogress..." }));
 });
 // Your endpoints go before this line
 

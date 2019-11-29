@@ -39,7 +39,8 @@ class UnconnectedProjectsPage extends Component {
     console.log("userProjects", userProjects);
     this.setState({ adminProjects, userProjects });
 
-    console.log("projects in the sate:", this.state.projects);
+    console.log(" admin projects in the sate:", this.state.adminProjects);
+    console.log(" user projects in the sate:", this.state.userProjects);
   };
 
   handleStartProject = () => {

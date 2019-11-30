@@ -11,8 +11,10 @@ class UnconnedtedTaskPage extends Component {
     this.state = {
       task: undefined,
       today: new Date(),
-      readOnly: true,
-      newDueDate: ""
+      admin: false,
+      newDueDate: "",
+      newDescription: "",
+      newAssignee: ""
     };
   }
   componentDidMount() {
@@ -34,14 +36,32 @@ class UnconnedtedTaskPage extends Component {
       });
       if (this.props.user.projects[this.props.projectId] === "admin") {
         console.log("is admin!");
-        this.setState({ readOnly: false });
+        this.setState({ admin: true });
       }
     }
+  };
+  handleAssigneeChange = event => {
+    this.setState({ newAssignee: event.target.value });
+  };
+  handleAssignTo = async event => {
+    event.preventDefault();
+    console.log("assigning to :", this.state.newAssignee);
+    let data = new FormData();
+    data.append("assignee", this.state.newAssignee);
+    data.append("projectId", this.props.projectId);
+    data.append("taskName", this.props.taskName);
+    let response = await fetch("/reassign-task", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("reassign response body:", body);
   };
   handleDateChange = date => {
     console.log("updating due date! :", date.toLocaleDateString());
     this.setState({
-      newDueDate: date
+      newDueDate: date.toLocaleDateString()
     });
     console.log("after date set state");
   };
@@ -49,14 +69,14 @@ class UnconnedtedTaskPage extends Component {
     this.setState({ newDescription: event.target.value });
   };
 
-  submitDescription = async event => {
+  submitDescription = event => {
     event.preventDefault();
     console.log(this.state.newDescription);
     let data = new FormData();
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
     data.append("description", this.state.newDescription);
-    let response = await fetch("/update-task-description", {
+    fetch("/update-task-description", {
       method: "POST",
       body: data
     });
@@ -76,12 +96,12 @@ class UnconnedtedTaskPage extends Component {
             <textarea
               rows="10"
               cols="80"
-              readOnly={this.state.readOnly}
+              readOnly={!this.state.admin}
               onChange={this.handleDescriptionChange}
             >
               {this.state.task.description}
             </textarea>
-            {!this.state.readOnly && <input type="submit"></input>}
+            {this.state.admin && <input type="submit"></input>}
           </form>
         </div>
         <div>
@@ -95,6 +115,17 @@ class UnconnedtedTaskPage extends Component {
             onChange={this.handleDateChange}
             value={this.state.newDueDate}
           ></DatePicker>
+        </div>
+        <div>
+          <b>Assigned to :</b>
+          {this.state.task.assignee}
+          {this.state.admin && (
+            <form onSubmit={this.handleAssignTo}>
+              assign to:
+              <input type="text" onChange={this.handleAssigneeChange}></input>
+              <button>submit</button>
+            </form>
+          )}
         </div>
         <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
       </div>

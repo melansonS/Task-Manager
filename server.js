@@ -236,7 +236,7 @@ app.post("/new-task", upload.array("files"), (req, res) => {
   dueDate = dueDate.toLocaleDateString();
   creationDate = creationDate.toLocaleDateString();
   let completionDate = "";
-  let asignees = [];
+  let assignee = "";
   let watchers = [];
   let comments = [];
   //get the frontend path for each of the uplaoded files.
@@ -258,7 +258,7 @@ app.post("/new-task", upload.array("files"), (req, res) => {
     creationDate,
     dueDate,
     completionDate,
-    asignees,
+    assignee,
     watchers,
     comments
   };
@@ -299,7 +299,38 @@ app.post("/task-data", upload.none(), (req, res) => {
   });
   //   res.send(JSON.stringify({ success: "inprogress..." }));
 });
+app.post("/reassign-task", upload.none(), (req, res) => {
+  console.log("REASSIGN HIT");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  let assignee = req.body.assignee;
 
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      console.log("reassing task err:", err);
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        console.log("MATCHING TASK TITLE:", task.title);
+        task.assignee = assignee;
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .findOneAndUpdate(
+        { _id: ObjectID(pid) },
+        { $set: { tasks: updatedTasks } },
+        (err, project) => {
+          if (err) {
+            return res.send(JSON.stringify({ success: false }));
+          }
+          return res.send(JSON.stringify({ success: true }));
+        }
+      );
+  });
+});
 app.post("/update-task-description", upload.none(), (req, res) => {
   console.log("UPDATE-TASK-DESCRIPTION HIT==");
 

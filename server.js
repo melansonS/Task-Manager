@@ -230,7 +230,12 @@ app.post("/new-task", upload.array("files"), (req, res) => {
   let posts = [];
   let type = "task";
   let status = "new";
-  let creationDate = new Date().toLocaleDateString();
+  let creationDate = new Date();
+  let dueDate = new Date(creationDate);
+  dueDate.setDate(dueDate.getDate() + 2);
+  dueDate = dueDate.toLocaleDateString();
+  creationDate = creationDate.toLocaleDateString();
+  let completionDate = "";
   let asignees = [];
   let watchers = [];
   let comments = [];
@@ -251,6 +256,8 @@ app.post("/new-task", upload.array("files"), (req, res) => {
     type,
     status,
     creationDate,
+    dueDate,
+    completionDate,
     asignees,
     watchers,
     comments
@@ -291,6 +298,31 @@ app.post("/task-data", upload.none(), (req, res) => {
     res.send(JSON.stringify({ success: true, taskData: querriedTask[0] }));
   });
   //   res.send(JSON.stringify({ success: "inprogress..." }));
+});
+
+app.post("/update-task-description", upload.none(), (req, res) => {
+  console.log("UPDATE-TASK-DESCRIPTION HIT==");
+
+  let pid = req.body.projectId;
+  let newDescription = req.body.description;
+  let taskName = req.body.taskName;
+
+  console.log("pid:", pid, " newDesc:", newDescription);
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      console.log("update desc err:", err);
+    }
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        task.description = newDescription;
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
+  });
+  res.send(JSON.stringify({ success: "in progress" }));
 });
 // Your endpoints go before this line
 

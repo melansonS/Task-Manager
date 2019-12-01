@@ -181,6 +181,36 @@ app.post("/get-projects", upload.none(), (req, res) => {
     });
   console.log("IDS;", ids);
 });
+app.post("/get-todos", upload.none(), (req, res) => {
+  console.log("GET TODOS HIT==");
+  let username = req.body.username;
+  let projectsIds = req.body.projects.split(",");
+  let ids = projectsIds.map(project => {
+    return ObjectID(project);
+  });
+  console.log("user:", username, " ,pIds:", ids);
+  dbo
+    .collection("projects")
+    .find({ _id: { $in: ids } })
+    .toArray((err, projects) => {
+      if (err) {
+        console.log("ERR:", err);
+        return res.send(JSON.stringify({ success: false }));
+      }
+      if (projects === null) {
+        return res.send(JSON.stringify({ success: false }));
+      }
+      let todos = [];
+      projects.forEach(project => {
+        project.tasks.forEach(task => {
+          if (task.assignee === username) {
+            todos.push({ [project._id]: task });
+          }
+        });
+      });
+      res.send(JSON.stringify({ success: true, todos }));
+    });
+});
 
 app.post("/add-user", upload.none(), (req, res) => {
   console.log("ADD-USER HIT====");
@@ -310,6 +340,15 @@ app.post("/reassign-task", upload.none(), (req, res) => {
       console.log("reassing task err:", err);
       return res.send(JSON.stringify({ success: false }));
     }
+    console.log("assignee:", assignee, " ,project users:", project.users);
+    if (
+      !project.users.includes(assignee) &&
+      !project.admin.includes(assignee)
+    ) {
+      return res.send(
+        JSON.stringify({ success: false, comment: "invalid user" })
+      );
+    }
     let updatedTasks = project.tasks.map(task => {
       if (task.title === taskName) {
         console.log("MATCHING TASK TITLE:", task.title);
@@ -342,6 +381,7 @@ app.post("/update-task-description", upload.none(), (req, res) => {
   dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
     if (err) {
       console.log("update desc err:", err);
+      return res.send(JSON.stringify({ success: false }));
     }
     let updatedTasks = project.tasks.map(task => {
       if (task.title === taskName) {
@@ -354,6 +394,29 @@ app.post("/update-task-description", upload.none(), (req, res) => {
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
   });
   res.send(JSON.stringify({ success: "in progress" }));
+});
+app.post("/update-task-due-date", upload.none(), (req, res) => {
+  console.log("DUE DATE UPDATE HIT==");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  let newDueDate = req.body.dueDate;
+  console.log("id:", pid, " name:", taskName, " date:", newDueDate);
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        task.dueDate = newDueDate;
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
+  });
+
+  res.send(JSON.stringify({ success: "inprogress" }));
 });
 // Your endpoints go before this line
 

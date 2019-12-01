@@ -58,12 +58,22 @@ class UnconnedtedTaskPage extends Component {
     body = JSON.parse(body);
     console.log("reassign response body:", body);
   };
-  handleDateChange = date => {
+  handleDateChange = async date => {
     console.log("updating due date! :", date.toLocaleDateString());
+    let data = new FormData();
+    data.append("projectId", this.props.projectId);
+    data.append("taskName", this.props.taskName);
+    data.append("dueDate", date.toLocaleDateString());
+    let response = await fetch("/update-task-due-date", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("update due date response body:", body);
     this.setState({
       newDueDate: date.toLocaleDateString()
     });
-    console.log("after date set state");
   };
   handleDescriptionChange = event => {
     this.setState({ newDescription: event.target.value });

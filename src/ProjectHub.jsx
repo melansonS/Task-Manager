@@ -43,7 +43,7 @@ class UnconnectedProjectHub extends Component {
       window.alert("Already a user!");
       this.setState({ addUserUsername: "" });
     } else {
-      console.log("new User email:", this.state.addUserUsername);
+      console.log("new User:", this.state.addUserUsername);
       let data = new FormData();
       data.append("username", this.state.addUserUsername);
       data.append("projectId", this.props.id);
@@ -154,9 +154,11 @@ class UnconnectedProjectHub extends Component {
             {completedTasks}
           </div>
         )}
-        <div>
-          <NewTaskForm projectId={this.state.project._id}></NewTaskForm>
-        </div>
+        {this.state.role === "admin" && (
+          <div>
+            <NewTaskForm projectId={this.state.project._id}></NewTaskForm>
+          </div>
+        )}
         {this.state.role === "admin" && (
           <div>
             <h3>Add a user!</h3>

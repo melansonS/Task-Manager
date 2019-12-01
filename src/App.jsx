@@ -7,6 +7,7 @@ import Navbar from "./Navbar.jsx";
 import ProjectsPage from "./ProjectsPage.jsx";
 import ProjectHub from "./ProjectHub.jsx";
 import TaskPage from "./TaskPage.jsx";
+import TodoPage from "./TodoPage.jsx";
 class UnonnectedApp extends Component {
   componentDidMount() {
     this.autoLoggin();
@@ -65,7 +66,7 @@ class UnonnectedApp extends Component {
             <ProjectsPage></ProjectsPage>
           </Route>
           <Route path="/todo" exact={true}>
-            <div>Todo!</div>
+            <TodoPage></TodoPage>
           </Route>
           <Route path="/search" exact={true}>
             <div>Searching...</div>

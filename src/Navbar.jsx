@@ -13,7 +13,7 @@ class UnconnectNavbar extends Component {
   }
   handleSearchSubmit = event => {
     event.preventDefault();
-    console.log("Searching for...", this.state.searchQuery);
+    this.props.dispatch({ type: "search", query: this.state.searchQuery });
     this.setState({ searchQuery: "" });
     this.props.history.push("/search");
   };

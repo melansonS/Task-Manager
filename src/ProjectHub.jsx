@@ -53,6 +53,10 @@ class UnconnectedProjectHub extends Component {
       console.log(body);
     }
   };
+  updateTasks = newTasks => {
+    console.log("in update tasks, newTasks:", newTasks);
+    this.setState({ project: { ...this.state.project, tasks: newTasks } });
+  };
 
   render() {
     console.log("this project:", this.state.project);
@@ -68,16 +72,16 @@ class UnconnectedProjectHub extends Component {
       });
       //filter through each of the tasks and assign them to the correct array
       this.state.project.tasks.forEach(task => {
-        if (task.status === "new") {
+        if (task.status === "New") {
           newTasks.push(task);
         }
-        if (task.status === "in progress") {
+        if (task.status === "In Progress") {
           inProgressTasks.push(task);
         }
-        if (task.status === "on hold") {
+        if (task.status === "On Hold") {
           onHoldTasks.push(task);
         }
-        if (task.status === "completed") {
+        if (task.status === "Completed") {
           completedTasks.push(task);
         }
       });
@@ -138,25 +142,28 @@ class UnconnectedProjectHub extends Component {
         )}
         {inProgressTasks.length > 0 && (
           <div className="project-hub-in-progress-tasks">
-            <h1>New Tasks</h1>
+            <h1>In Progress</h1>
             {inProgressTasks}
           </div>
         )}
         {onHoldTasks.length > 0 && (
           <div className="project-hub-on-hold-tasks">
-            <h1>New Tasks</h1>
+            <h1>On Hold</h1>
             {onHoldTasks}
           </div>
         )}
         {completedTasks.length > 0 && (
           <div className="project-hub-completed-tasks">
-            <h1>New Tasks</h1>
+            <h1>Completed</h1>
             {completedTasks}
           </div>
         )}
         {this.state.role === "admin" && (
           <div>
-            <NewTaskForm projectId={this.state.project._id}></NewTaskForm>
+            <NewTaskForm
+              projectId={this.state.project._id}
+              updateTasks={this.updateTasks}
+            ></NewTaskForm>
           </div>
         )}
         {this.state.role === "admin" && (

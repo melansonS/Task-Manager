@@ -41,7 +41,25 @@ body {
   background-color: #fff;
   position: absolute;
   left: 1vw;
+  z-index: 1;
 }
 .icon-menu-header {
   display: flex;
+}
+.task-page {
+  display: flex;
+}
+.task-body {
+  position: relative;
+}
+
+.task-posts {
+  display: flex;
+}
+.task-posts img {
+  height: 90px;
+}
+
+.task-menu div {
+  margin-bottom: 15px;
 }

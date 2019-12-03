@@ -13,6 +13,9 @@ class UnconnectedTodoPage extends Component {
     this.getTasks();
   }
   getTasks = async () => {
+    if (Object.keys(this.props.user.projects).length <= 0) {
+      return;
+    }
     let data = new FormData();
     data.append("username", this.props.user.username);
     data.append("projects", Object.keys(this.props.user.projects));
@@ -29,10 +32,10 @@ class UnconnectedTodoPage extends Component {
       return <div>no tasks currently assined to you</div>;
     }
     let taskCardElems = [];
-    this.state.todos.forEach(project => {
-      let pid = Object.keys(project)[0];
-      let task = Object.values(project)[0];
-      taskCardElems.push(<TaskCard task={task} projectId={pid}></TaskCard>);
+    this.state.todos.forEach(task => {
+      taskCardElems.push(
+        <TaskCard task={task} projectId={task.pid}></TaskCard>
+      );
     });
     return <div>All of your Todos!{taskCardElems}</div>;
   }

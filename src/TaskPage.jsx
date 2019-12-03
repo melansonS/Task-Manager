@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import CommentSection from "./CommentSection.jsx";
+import "./main.css";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -10,8 +12,11 @@ class UnconnedtedTaskPage extends Component {
     super(props);
     this.state = {
       task: undefined,
+      assignee: "",
+      watchers: [],
       today: new Date(),
       admin: false,
+      status: "",
       newDueDate: "",
       newDescription: "",
       newAssignee: ""
@@ -31,6 +36,9 @@ class UnconnedtedTaskPage extends Component {
     if (body.success) {
       this.setState({
         task: body.taskData,
+        assignee: body.taskData.assignee,
+        watchers: body.taskData.watchers,
+        status: body.taskData.status,
         newDescription: body.taskData.description,
         newDueDate: body.taskData.dueDate
       });
@@ -57,6 +65,9 @@ class UnconnedtedTaskPage extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     console.log("reassign response body:", body);
+    if (body.success) {
+      this.setState({ assignee: this.state.newAssignee, newAssignee: "" });
+    }
   };
   handleDateChange = async date => {
     console.log("updating due date! :", date.toLocaleDateString());
@@ -91,14 +102,68 @@ class UnconnedtedTaskPage extends Component {
       body: data
     });
   };
+  toggleWatchTask = async event => {
+    console.log("Toggle Watching");
+    let user = this.props.user.username;
+    let data = new FormData();
+    data.append("projectId", this.props.projectId);
+    data.append("taskName", this.props.taskName);
+    data.append("user", user);
+    let response = await fetch("/toggle-watching-task", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("toggle watching response body:", body);
+    if (body.success) {
+      if (this.state.watchers.includes(user)) {
+        this.setState({
+          watchers: this.state.watchers.filter(watcher => {
+            return watcher !== user;
+          })
+        });
+      } else {
+        this.setState({ watchers: this.state.watchers.concat(user) });
+      }
+    }
+  };
+
+  updateStatus = async event => {
+    let newStatus = event.target.value;
+    console.log("update Status select:", newStatus);
+    let data = new FormData();
+    data.append("projectId", this.props.projectId);
+    data.append("taskName", this.props.taskName);
+    data.append("newStatus", newStatus);
+    let response = await fetch("/update-task-status", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    if (body.success) {
+      this.setState({ status: newStatus });
+    }
+  };
 
   render() {
     if (this.state.task === undefined) {
       return <div>Loading...</div>;
     }
+    let posts = undefined;
+    if (this.state.task.posts.length > 0) {
+      posts = this.state.task.posts.map((post, index) => {
+        return (
+          <div>
+            <img src={post}></img>
+          </div>
+        );
+      });
+    }
     return (
-      <div>
-        <div>
+      <div className="task-page">
+        <div className="task-body">
           <h2>Title:</h2>
           {this.state.task.title}
           <h4>Description:</h4>
@@ -113,31 +178,62 @@ class UnconnedtedTaskPage extends Component {
             </textarea>
             {this.state.admin && <input type="submit"></input>}
           </form>
-        </div>
-        <div>
-          <b>Creation date:</b>
-          {this.state.task.creationDate}
-
-          <b>Due data:</b>
-          {this.state.newDueDate}
-          <DatePicker
-            selected={this.state.today}
-            onChange={this.handleDateChange}
-            value={this.state.newDueDate}
-          ></DatePicker>
-        </div>
-        <div>
-          <b>Assigned to :</b>
-          {this.state.task.assignee}
-          {this.state.admin && (
-            <form onSubmit={this.handleAssignTo}>
-              assign to:
-              <input type="text" onChange={this.handleAssigneeChange}></input>
-              <button>submit</button>
-            </form>
+          {posts && (
+            <div className="task-posts">
+              <h3>Posts:</h3>
+              {posts}
+            </div>
           )}
+
+          <CommentSection task={this.state.task}></CommentSection>
         </div>
-        <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
+        <div className="task-menu">
+          <div>
+            <b>Creation date:</b>
+            {this.state.task.creationDate}
+          </div>
+          <div>
+            <b>Due date:</b>
+            <DatePicker
+              selected={this.state.today}
+              onChange={this.handleDateChange}
+              value={this.state.newDueDate}
+            ></DatePicker>
+          </div>
+          <div>
+            <b>Assigned to :</b>
+            {this.state.assignee}
+            {this.state.admin && (
+              <form onSubmit={this.handleAssignTo}>
+                assign to:
+                <input
+                  type="text"
+                  onChange={this.handleAssigneeChange}
+                  value={this.state.newAssignee}
+                ></input>
+                <button>submit</button>
+              </form>
+            )}
+          </div>
+          <div>
+            <b>Watchers :</b>
+            {this.state.watchers.join(" ")}
+            <div>
+              <button onClick={this.toggleWatchTask}>Watch this Task</button>
+            </div>
+          </div>
+          <div>
+            Status:
+            <select onChange={this.updateStatus} value={this.state.status}>
+              <option value="New">New</option>
+              <option value="In Progress">In Progress</option>
+              <option value="On Hold">On Hold</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
+        </div>
       </div>
     );
   }

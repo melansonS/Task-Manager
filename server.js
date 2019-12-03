@@ -125,6 +125,42 @@ app.post("/logout", upload.none(), (req, res) => {
   });
 });
 
+app.post("/update-password", upload.none(), (req, res) => {
+  console.log("UPDATE PASSWORD HIT");
+  let user = req.body.user;
+  let newPass = req.body.newPass;
+  dbo
+    .collection("users")
+    .updateOne(
+      { username: user },
+      { $set: { password: newPass } },
+      (err, user) => {
+        if (err) {
+          return res.send(JSON.stringify({ success: false }));
+        }
+        if (user === null) {
+          return res.send(JSON.stringify({ success: false }));
+        }
+        return res.send(JSON.stringify({ success: true }));
+      }
+    );
+});
+
+app.post("/update-email",upload.none(),(req,res)=>{
+    console.log("UPDATE EMAIL HIT")
+    let user = req.body.user
+    let newEmail = req.body.newEmail
+    dbo.collection("users").updateOne({username:user},{$set:{email:newEmail}},(err,user)=>{
+        if(err){
+            return res.send(JSON.stringify({success:false}))
+        }
+        if(user === null){
+            return res.send(JSON.stringify({success:false}))
+        }
+        return res.send(JSON.stringify({success:true}))
+    })
+})
+
 app.post("/new-project", upload.none(), (req, res) => {
   console.log("NEW-PROJECT HIT=======");
   let username = req.body.username;
@@ -161,7 +197,71 @@ app.post("/new-project", upload.none(), (req, res) => {
 
   res.send(JSON.stringify({ success: "in progress.." }));
 });
+app.post("/search", upload.none(), (req, res) => {
+  console.log("SEARCH HIT ++");
+  let searchInputs = req.body.searchInput.split(" ");
+  let username = req.body.username;
+  let projectIds = req.body.projectIds.split(",");
+  let ids = projectIds.map(project => {
+    return ObjectID(project);
+  });
+  dbo
+    .collection("projects")
+    .find({ _id: { $in: ids } })
+    .toArray((err, projects) => {
+      if (err) {
+        return res.send(JSON.stringify({ success: false }));
+      }
+      if (projects === null) {
+        return res.send(JSON.stringify({ success: false }));
+      }
+      let searchResults = [];
+      //search for matches between the tags and the search inputs
+      projects.forEach(project => {
+        project.tasks.forEach(task => {
+          task.tags.forEach(tag => {
+            searchInputs.forEach(input => {
+              //toLowerCase used to make the search non case sensitive
+              if (tag.toLowerCase().includes(input.toLowerCase())) {
+                searchResults.push(task);
+              }
+            });
+          });
+        });
+      });
 
+      //search for task titles that include any of the search inputs
+      projects.forEach(project => {
+        project.tasks.forEach(task => {
+          searchInputs.forEach(input => {
+            //toLowerCase used to make the search non case sensitive
+            if (task.title.toLowerCase().includes(input.toLowerCase())) {
+              searchResults.push(task);
+            }
+          });
+        });
+      });
+      //filter out multiple instances of the same task
+      let filteredSearchResults = [];
+      searchResults.forEach(result => {
+        let found = false;
+        filteredSearchResults.forEach(task => {
+          if (result.title === task.title) {
+            found = true;
+          }
+        });
+        if (!found) {
+          filteredSearchResults.push(result);
+        }
+        console.log(filteredSearchResults);
+      });
+      //retrun the filtered Search
+      res.send(
+        JSON.stringify({ success: true, searchResults: filteredSearchResults })
+      );
+    });
+  console.log("search:", searchInputs, " u:", username, " ids:", ids);
+});
 app.post("/get-projects", upload.none(), (req, res) => {
   console.log("GET PROJECTS HIT======");
   let ids = req.body.projectIds;
@@ -184,8 +284,8 @@ app.post("/get-projects", upload.none(), (req, res) => {
 app.post("/get-todos", upload.none(), (req, res) => {
   console.log("GET TODOS HIT==");
   let username = req.body.username;
-  let projectsIds = req.body.projects.split(",");
-  let ids = projectsIds.map(project => {
+  let projectIds = req.body.projects.split(",");
+  let ids = projectIds.map(project => {
     return ObjectID(project);
   });
   console.log("user:", username, " ,pIds:", ids);
@@ -204,7 +304,9 @@ app.post("/get-todos", upload.none(), (req, res) => {
       projects.forEach(project => {
         project.tasks.forEach(task => {
           if (task.assignee === username) {
-            todos.push({ [project._id]: task });
+            if (task.status !== "Completed") {
+              todos.push(task);
+            }
           }
         });
       });
@@ -259,7 +361,7 @@ app.post("/new-task", upload.array("files"), (req, res) => {
   let files = req.files;
   let posts = [];
   let type = "task";
-  let status = "new";
+  let status = "New";
   let creationDate = new Date();
   let dueDate = new Date(creationDate);
   dueDate.setDate(dueDate.getDate() + 2);
@@ -290,21 +392,23 @@ app.post("/new-task", upload.array("files"), (req, res) => {
     completionDate,
     assignee,
     watchers,
-    comments
+    comments,
+    pid
   };
-  console.log("new task!:", newTask);
   dbo
     .collection("projects")
-    .updateOne(
+    .findOneAndUpdate(
       { _id: ObjectID(pid) },
       { $push: { tasks: newTask } },
-      (err, task) => {
+      { returnOriginal: false },
+      (err, project) => {
         if (err) {
           console.log("new-task err:", err);
           return res.send(JSON.stringify({ success: false }));
         }
-        res.send(JSON.stringify({ success: "in progress..." }));
-        console.log("TASK:", task);
+        res.send(
+          JSON.stringify({ success: true, newTasksArr: project.value.tasks })
+        );
       }
     );
 });
@@ -322,10 +426,10 @@ app.post("/task-data", upload.none(), (req, res) => {
     if (project === null) {
       return res.send(JSON.stringify({ success: false }));
     }
-    let querriedTask = project.tasks.filter(task => {
+    let queriedTask = project.tasks.filter(task => {
       return task.title === taskName;
     });
-    res.send(JSON.stringify({ success: true, taskData: querriedTask[0] }));
+    res.send(JSON.stringify({ success: true, taskData: queriedTask[0] }));
   });
   //   res.send(JSON.stringify({ success: "inprogress..." }));
 });
@@ -370,6 +474,47 @@ app.post("/reassign-task", upload.none(), (req, res) => {
       );
   });
 });
+
+app.post("/toggle-watching-task", upload.none(), (req, res) => {
+  console.log("TOGGLE WATCHIN HIT==");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  let user = req.body.user;
+  console.log("pid:", pid, ", task:", taskName, " ,user:", user);
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    if (project === null) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        if (task.watchers.includes(user)) {
+          task.watchers = task.watchers.filter(watcher => {
+            return watcher !== user;
+          });
+        } else {
+          task.watchers.push(user);
+        }
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .updateOne(
+        { _id: ObjectID(pid) },
+        { $set: { tasks: updatedTasks } },
+        err => {
+          if (err) {
+            return res.send(JSON.stringify({ success: false }));
+          }
+          return res.send(JSON.stringify({ success: true }));
+        }
+      );
+  });
+});
+
 app.post("/update-task-description", upload.none(), (req, res) => {
   console.log("UPDATE-TASK-DESCRIPTION HIT==");
 
@@ -392,9 +537,51 @@ app.post("/update-task-description", upload.none(), (req, res) => {
     dbo
       .collection("projects")
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
+
+    res.send(JSON.stringify({ success: true }));
   });
-  res.send(JSON.stringify({ success: "in progress" }));
 });
+
+app.post("/add-comment", upload.none(), (req, res) => {
+  console.log("ADD COMMENT HIT");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  let user = req.body.user;
+  let newComment = req.body.newComment;
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    if (project === null) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let timeStamp = new Date().toLocaleTimeString();
+    console.log("timeStamp:", timeStamp);
+    let comment = { user, content: newComment, timeStamp };
+    console.log("comment:", comment);
+    let modifiedTask = undefined;
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        task.comments.push(comment);
+        modifiedTask = task;
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .updateOne(
+        { _id: ObjectID(pid) },
+        { $set: { tasks: updatedTasks } },
+        (err, project) => {
+          if (err) {
+            return res.send(JSON.stringify({ success: false }));
+          }
+          return res.send(JSON.stringify({ success: true, modifiedTask }));
+        }
+      );
+  });
+});
+
 app.post("/update-task-due-date", upload.none(), (req, res) => {
   console.log("DUE DATE UPDATE HIT==");
   let pid = req.body.projectId;
@@ -414,10 +601,37 @@ app.post("/update-task-due-date", upload.none(), (req, res) => {
     dbo
       .collection("projects")
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
-  });
 
-  res.send(JSON.stringify({ success: "inprogress" }));
+    res.send(JSON.stringify({ success: true }));
+  });
 });
+
+app.post("/update-task-status", upload.none(), (req, res) => {
+  console.log("UPDATE TASK STATUS HIT===");
+  let pid = req.body.projectId;
+  let taskName = req.body.taskName;
+  let newStatus = req.body.newStatus;
+  console.log("new Status:", newStatus, " ,pid:", pid, " ,name:", taskName);
+  dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
+    if (err) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    if (project === null) {
+      return res.send(JSON.stringify({ success: false }));
+    }
+    let updatedTasks = project.tasks.map(task => {
+      if (task.title === taskName) {
+        task.status = newStatus;
+      }
+      return task;
+    });
+    dbo
+      .collection("projects")
+      .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
+    res.send(JSON.stringify({ success: true }));
+  });
+});
+
 // Your endpoints go before this line
 
 app.all("/*", (req, res, next) => {

@@ -42,7 +42,10 @@ class UnconnectedNewTaskForm extends Component {
     }
     let response = await fetch("/new-task", { method: "POST", body: data });
     let body = await response.text();
+    body = JSON.parse(body);
+    this.setState({ title: "", description: "", tags: "", files: [] });
     console.log("new task response body->", body);
+    this.props.updateTasks(body.newTasksArr);
   };
 
   render() {
@@ -51,13 +54,33 @@ class UnconnectedNewTaskForm extends Component {
         <h3>New Task form!</h3>
         <form onSubmit={this.handleNewTaskSubmit}>
           Title:
-          <input type="text" required onChange={this.handleTitleChange}></input>
+          <input
+            type="text"
+            required
+            onChange={this.handleTitleChange}
+            value={this.state.title}
+          ></input>
           Description:
-          <input type="text" required onChange={this.handleDescChange}></input>
+          <input
+            type="text"
+            required
+            onChange={this.handleDescChange}
+            value={this.state.description}
+          ></input>
           Tags:
-          <input type="text" required onChange={this.handleTagsChange}></input>
+          <input
+            type="text"
+            required
+            onChange={this.handleTagsChange}
+            value={this.state.tags}
+          ></input>
           Relevant images:
-          <input type="file" onChange={this.handleFileChange} multiple></input>
+          <input
+            type="file"
+            onChange={this.handleFileChange}
+            multiple
+            value={this.state.files}
+          ></input>
           <input type="submit"></input>
         </form>
       </div>

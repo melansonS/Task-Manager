@@ -5,7 +5,11 @@ class UnconnectedUserIcon extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showMenu: false
+      showMenu: false,
+      showUserSettings: false,
+      newEmail: "",
+      newPassword: "",
+      passwordConfirmation: ""
     };
   }
   componentDidMount() {
@@ -20,11 +24,60 @@ class UnconnectedUserIcon extends Component {
   handleShowMenu = () => {
     this.setState({ showMenu: true });
   };
+  handleShowUserSettings = () => {
+    this.setState({ showUserSettings: true });
+  };
   handleMenuClose = () => {
-    this.setState({ showMenu: false });
+    this.setState({ showMenu: false, showUserSettings: false });
   };
 
-  handleLogout = async event => {
+  handleEmailChange = event => {
+    this.setState({ newEmail: event.target.value });
+  };
+
+  handlePasswordChange = event => {
+    this.setState({ newPassword: event.target.value });
+  };
+  handlePasswordConfirmationChange = event => {
+    this.setState({ passwordConfirmation: event.target.value });
+  };
+
+  handleEmailSubmit = async event => {
+    event.preventDefault();
+    console.log("updating Email");
+    let data = new FormData();
+    data.append("user", this.props.user.username);
+    data.append("newEmail", this.state.newEmail);
+    let response = await fetch("/update-email", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("update email response body:", body);
+    if (body.success) {
+      this.handleMenuClose();
+    }
+  };
+
+  handlePasswordSubmit = async event => {
+    event.preventDefault();
+    if (this.state.newPassword === this.state.passwordConfirmation) {
+      console.log("Updating passwords");
+      let data = new FormData();
+      data.append("user", this.props.user.username);
+      data.append("newPass", this.state.newPassword);
+      let response = await fetch("/update-password", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("update password response body:", body);
+      if (body.success) {
+        this.handleMenuClose();
+      }
+    }
+  };
+
+  handleLogout = async () => {
     let response = await fetch("/logout", {
       method: "POST",
       credentials: "include"
@@ -50,7 +103,37 @@ class UnconnectedUserIcon extends Component {
               <h4>User Icon Menu</h4>
               <button onClick={this.handleMenuClose}>x</button>
             </div>
+            <button onClick={this.handleShowUserSettings}>User Settings</button>
             <button onClick={this.handleLogout}>Log out</button>
+            {this.state.showUserSettings && (
+              <div>
+                Update Email:
+                <form onSubmit={this.handleEmailSubmit}>
+                  <input
+                    type="email"
+                    onChange={this.handleEmailChange}
+                    required
+                  ></input>
+                  <input type="submit"></input>
+                </form>
+                Update Password:
+                <form onSubmit={this.handlePasswordSubmit}>
+                  <input
+                    type="password"
+                    onChange={this.handlePasswordChange}
+                    required
+                    placeholder="New Password"
+                  ></input>
+                  <input
+                    type="password"
+                    onChange={this.handlePasswordConfirmationChange}
+                    required
+                    placeholder="Confrim Password"
+                  ></input>
+                  <input type="submit"></input>
+                </form>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 class UnconnectedSignup extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ class UnconnectedSignup extends Component {
         email: this.state.email
       };
       this.props.dispatch({ type: "login-success", user });
+      this.props.history.push("/home");
     } else if (body.usernameTake) {
       window.alert("Username already in use!");
     } else {
@@ -59,7 +61,7 @@ class UnconnectedSignup extends Component {
           ></input>
           Password:
           <input
-            type="text"
+            type="password"
             onChange={this.handlePasswordChange}
             required
           ></input>
@@ -76,6 +78,6 @@ class UnconnectedSignup extends Component {
   }
 }
 
-let Signup = connect()(UnconnectedSignup);
+let Signup = connect()(withRouter(UnconnectedSignup));
 
 export default Signup;

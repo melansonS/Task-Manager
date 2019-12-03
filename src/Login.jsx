@@ -50,7 +50,7 @@ class UnconnectedLogin extends Component {
           ></input>
           Password:
           <input
-            type="text"
+            type="password"
             onChange={this.handlePasswordChange}
             required
           ></input>

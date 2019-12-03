@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import Login from "./Login.jsx";
 import Signup from "./Signup.jsx";
 import Navbar from "./Navbar.jsx";
+import SearchResults from "./SearchResults.jsx";
 import ProjectsPage from "./ProjectsPage.jsx";
 import ProjectHub from "./ProjectHub.jsx";
 import TaskPage from "./TaskPage.jsx";
@@ -69,7 +70,7 @@ class UnonnectedApp extends Component {
             <TodoPage></TodoPage>
           </Route>
           <Route path="/search" exact={true}>
-            <div>Searching...</div>
+            <SearchResults></SearchResults>
           </Route>
           <Route
             path="/project/:projectId"

@@ -7,11 +7,14 @@ let reducer = (state, action) => {
   if (action.type === "logout") {
     return { ...state, isLoggedIn: false, userData: {} };
   }
+  if (action.type === "search") {
+    return { ...state, searchQuery: action.query };
+  }
 
   return state;
 };
 
-let initialState = { isLoggedIn: false, userData: {} };
+let initialState = { isLoggedIn: false, userData: {}, searchQuery: "" };
 
 let store = createStore(
   reducer,

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import CommentSection from "./CommentSection.jsx";
 import "./main.css";
@@ -147,6 +147,28 @@ class UnconnedtedTaskPage extends Component {
     }
   };
 
+  handleDeleteTask = async () => {
+    let nameConfirmation = window.prompt(
+      "Confirm deletion by typing out the name of the Task:"
+    );
+    if (nameConfirmation === this.state.task.title) {
+      console.log("deleting task!");
+      let data = new FormData();
+      data.append("projectId", this.props.projectId);
+      data.append("taskName", this.props.taskName);
+      let response = await fetch("/detele-task", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("delete task response body:", body);
+      if (body.success) {
+        this.props.history.push("/project/" + this.props.projectId);
+      }
+    }
+  };
+
   render() {
     if (this.state.task === undefined) {
       return <div>Loading...</div>;
@@ -231,6 +253,9 @@ class UnconnedtedTaskPage extends Component {
               <option value="Completed">Completed</option>
             </select>
           </div>
+          {this.state.admin && (
+            <button onClick={this.handleDeleteTask}>Delete task</button>
+          )}
 
           <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
         </div>
@@ -243,6 +268,6 @@ let mapStateToProps = st => {
   return { user: st.userData };
 };
 
-let TaskPage = connect(mapStateToProps)(UnconnedtedTaskPage);
+let TaskPage = connect(mapStateToProps)(withRouter(UnconnedtedTaskPage));
 
 export default TaskPage;

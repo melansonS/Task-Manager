@@ -40,7 +40,7 @@ class UnconnectedSignup extends Component {
         email: this.state.email
       };
       this.props.dispatch({ type: "login-success", user });
-      this.props.history.push("/home");
+      this.props.history.push("/projects");
     } else if (body.usernameTake) {
       window.alert("Username already in use!");
     } else {

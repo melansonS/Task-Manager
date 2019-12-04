@@ -8,6 +8,8 @@ class UnconnectedProjectHub extends Component {
     super(props);
     this.state = {
       addUserUsername: "",
+      addAdminUsername: "",
+      removeUserName: "",
       project: {},
       role: ""
     };
@@ -39,7 +41,10 @@ class UnconnectedProjectHub extends Component {
   };
   handleAddUserSubmit = async event => {
     event.preventDefault();
-    if (this.state.project.users.includes(this.state.addUserUsername)) {
+    if (
+      this.state.project.users.includes(this.state.addUserUsername) ||
+      this.state.project.admin.includes(this.state.addUserUsername)
+    ) {
       window.alert("Already a user!");
       this.setState({ addUserUsername: "" });
     } else {
@@ -53,6 +58,59 @@ class UnconnectedProjectHub extends Component {
       console.log(body);
     }
   };
+
+  handleAddAdminName = event => {
+    this.setState({ addAdminUsername: event.target.value });
+  };
+  handleAddAdminSubmit = async event => {
+    event.preventDefault();
+    if (this.state.project.admin.includes(this.state.addAdminUsername)) {
+      window.alert("Already an Admin!");
+      this.setState({ addAdminUsername: "" });
+    } else if (
+      !this.state.project.users.includes(this.state.addAdminUsername)
+    ) {
+      window.alert("Error, new admin must already be users on this project");
+      this.setState({ addAdminUsername: "" });
+    } else {
+      console.log("Adding Admin:", this.state.addAdminUsername);
+      let data = new FormData();
+      data.append("projectId", this.state.project._id);
+      data.append("newAdmin", this.state.addAdminUsername);
+      let response = await fetch("/add-admin", { method: "POST", body: data });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("Add admin response body:", body);
+    }
+  };
+
+  handleRemoveUserName = event => {
+    this.setState({ removeUserName: event.target.value });
+  };
+  handleRemoveUserSubmit = async event => {
+    event.preventDefault();
+    if (
+      this.state.project.users.includes(this.state.removeUserName) ||
+      this.state.project.admin.includes(this.state.removeUserName)
+    ) {
+      console.log("removing ", this.state.removeUserName);
+      let data = new FormData();
+      data.append("removeUser", this.state.removeUserName);
+      data.append("projectId", this.state.project._id);
+      let response = await fetch("/remove-user", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("remove user response body:", body);
+    } else {
+      window.alert("Invalid user");
+      this.setState({ removeUserName: "" });
+    }
+  };
+
+  //method passed to the new task form in order to rerender the project hub with the newly added task
   updateTasks = newTasks => {
     console.log("in update tasks, newTasks:", newTasks);
     this.setState({ project: { ...this.state.project, tasks: newTasks } });
@@ -159,25 +217,49 @@ class UnconnectedProjectHub extends Component {
           </div>
         )}
         {this.state.role === "admin" && (
-          <div>
-            <NewTaskForm
-              projectId={this.state.project._id}
-              updateTasks={this.updateTasks}
-            ></NewTaskForm>
-          </div>
-        )}
-        {this.state.role === "admin" && (
-          <div>
-            <h3>Add a user!</h3>
-            <form onSubmit={this.handleAddUserSubmit}>
-              <input
-                type="text"
-                placeholder="user's name"
-                onChange={this.handleAddUserUsername}
-                value={this.state.addUserUsername}
-              ></input>
-              <input type="submit"></input>
-            </form>
+          <div className="project-hub-admin-menu">
+            <div>
+              <NewTaskForm
+                projectId={this.state.project._id}
+                updateTasks={this.updateTasks}
+              ></NewTaskForm>
+            </div>
+            <div>
+              <h3>Add a user!</h3>
+              <form onSubmit={this.handleAddUserSubmit}>
+                <input
+                  type="text"
+                  placeholder="user's name"
+                  onChange={this.handleAddUserUsername}
+                  value={this.state.addUserUsername}
+                ></input>
+                <input type="submit"></input>
+              </form>
+            </div>
+            <div>
+              <h3>Make a User an Admin!</h3>
+              <form onSubmit={this.handleAddAdminSubmit}>
+                <input
+                  type="text"
+                  placeholder="user's name"
+                  onChange={this.handleAddAdminName}
+                  value={this.state.addAdminUsername}
+                ></input>
+                <input type="submit"></input>
+              </form>
+            </div>
+            <div>
+              <h3>Remove a user!</h3>
+              <form onSubmit={this.handleRemoveUserSubmit}>
+                <input
+                  type="text"
+                  placeholder="user's name"
+                  onChange={this.handleRemoveUserName}
+                  value={this.state.removeUserName}
+                ></input>
+                <input type="submit"></input>
+              </form>
+            </div>
           </div>
         )}
       </div>

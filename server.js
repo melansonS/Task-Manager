@@ -351,6 +351,77 @@ app.post("/add-user", upload.none(), (req, res) => {
   });
 });
 
+app.post("/add-admin",upload.none(),(req,res)=>{
+    console.log("ADD ADMIN HIT")
+    let pid = req.body.projectId
+    let newAdmin = req.body.newAdmin
+    console.log("pid:",pid,", new admin:",newAdmin)
+    dbo.collection("users").findOne({username:newAdmin},(err,user)=>{
+        if(err){
+            return res.send(JSON.stringify({success:false}))
+        }
+        //set the value of the project in the user's projects object to Admin
+        let updatedProjects = user.projects;
+        updatedProjects[pid] = "admin"
+        //update the users projects on the db
+        dbo
+        .collection("users")
+        .updateOne({ username:newAdmin }, { $set: { projects: updatedProjects } });
+        //update the users and admin arrays of the affected project
+        dbo.collection("projects").findOne({_id:ObjectID(pid)},(err,project)=>{
+            if(err){
+                return res.send(JSON.stringify({success:false}))
+            }
+            let updatedUsers = project.users.filter(user=>{
+                return user !== newAdmin
+            })
+            let updatedAdmin = project.admin;
+            updatedAdmin.push(newAdmin)
+            //set the updated data to the project on the db
+            dbo.collection("projects").updateOne({_id:ObjectID(pid)},{$set:{users:updatedUsers,admin:updatedAdmin}},(err)=>{
+                if(err){
+                    return res.send(JSON.stringify({success:false}))
+                }
+                return res.send(JSON.stringify({success:true}))
+            })
+        })
+
+    })
+})
+
+app.post("/remove-user",upload.none(),(req,res)=>{
+    console.log("REMOVE USER HIT ==")
+    let pid = req.body.projectId
+    let removeUser = req.body.removeUser
+        console.log("pid:",pid,", removing:",removeUser)
+
+    dbo.collection("users").findOne({username:removeUser},(err,user)=>{
+        if(err){return res.send(JSON.stringify({success:false}))}
+        if(user === null){return res.send(JSON.stringify({success:false}))}
+
+        let updatedProjects = user.projects;
+        delete updatedProjects[pid];
+        dbo.collection('users').updateOne({username:removeUser},{$set:{projects:updatedProjects}})
+
+        dbo.collection("projects").findOne({_id:ObjectID(pid)},(err,project)=>{          
+        if(err){return res.send(JSON.stringify({success:false}))}
+        if(project === null){return res.send(JSON.stringify({success:false}))}  
+        let updatedUsers = project.users.filter(user=>{
+            return user !== removeUser
+        })
+        let updatedAdmin = project.admin.filter(user=>{
+            return user !== removeUser
+        })
+        dbo.collection("projects").updateOne({_id:ObjectID(pid)},{$set:{users:updatedUsers,admin:updatedAdmin}},(err)=>{
+                if(err){
+                    return res.send(JSON.stringify({success:false}))
+                }
+                return res.send(JSON.stringify({success:true}))
+            })
+        })
+    })
+})
+
 app.post("/new-task", upload.array("files"), (req, res) => {
   console.log("NEW-TASK HIT==");
   let author = req.body.author;
@@ -412,6 +483,29 @@ app.post("/new-task", upload.array("files"), (req, res) => {
       }
     );
 });
+
+app.post("/detele-task",upload.none(),(req,res)=>{
+    console.log("DELETE TASK HIT")
+    let pid = req.body.projectId
+    let taskName = req.body.taskName
+    dbo.collection("projects").findOne({_id:ObjectID(pid)},(err,project)=>{
+        if(err){
+            return res.send(JSON.stringify({success:false}))
+        }
+        if(project === null){
+            return res.send(JSON.stringify({success:false}))
+        }
+        let updatedTasks = project.tasks.filter(task=>{
+            return task.title !== taskName
+        })
+        dbo.collection("projects").updateOne({_id:ObjectID(pid)},{$set:{tasks:updatedTasks}},(err,project)=>{
+            if(err){
+                return res.send(JSON.stringify({success:false}))
+            }
+            return res.send(JSON.stringify({success:true}))
+        })
+    })
+})
 
 app.post("/task-data", upload.none(), (req, res) => {
   console.log("TASK-DATA HIT==");

@@ -37,7 +37,8 @@ class UnconnectedSignup extends Component {
       let user = {
         username: this.state.username,
         password: this.state.password,
-        email: this.state.email
+        email: this.state.email,
+        projects: {}
       };
       this.props.dispatch({ type: "login-success", user });
       this.props.history.push("/projects");

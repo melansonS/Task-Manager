@@ -5,7 +5,6 @@ class UnconnectedCommentSection extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      task: this.props.task,
       newComment: ""
     };
   }
@@ -26,14 +25,15 @@ class UnconnectedCommentSection extends Component {
     body = JSON.parse(body);
     console.log("comment submit response body:", body);
     if (body.success) {
-      this.setState({ newComment: "", task: body.modifiedTask });
+      this.setState({ newComment: "" });
+      this.props.renderComments(body.modifiedTask);
     }
   };
 
   render() {
     let commentElems = <div>no comments</div>;
-    if (this.state.task.comments.length > 0) {
-      commentElems = this.state.task.comments.map(comment => {
+    if (this.props.task.comments.length > 0) {
+      commentElems = this.props.task.comments.map(comment => {
         return (
           <div>
             <b>{comment.user}:</b>

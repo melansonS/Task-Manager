@@ -181,22 +181,27 @@ app.post("/new-project", upload.none(), (req, res) => {
       tasks: []
     },
     (err, proj) => {
+        if(err){return res.send(JSON.stringify({success:false}))}
       console.log("project", proj.ops[0]._id);
       let projectId = proj.ops[0]._id;
       dbo.collection("users").findOne({ username }, (err, user) => {
+        if(err){return res.send(JSON.stringify({success:false}))}
         console.log("user projects:", user.projects);
         let projectObj = user.projects;
         projectObj[projectId] = "admin";
         console.log("new user projects obj :", projectObj);
         dbo
           .collection("users")
-          .updateOne({ username }, { $set: { projects: projectObj } });
+          .findOneAndUpdate({ username }, { $set: { projects: projectObj } },{returnOriginal:false},(err,user)=>{
+              if(err){return res.send(JSON.stringify({success:false}))}
+                return res.send(JSON.stringify({success:true, newProject:proj.ops, user:user.value}))
+    });
       });
+      console.log("new-proj - PROJ:",proj.ops)
     }
   );
-
-  res.send(JSON.stringify({ success: "in progress.." }));
 });
+
 app.post("/search", upload.none(), (req, res) => {
   console.log("SEARCH HIT ++");
   let searchInputs = req.body.searchInput.split(" ");
@@ -412,7 +417,19 @@ app.post("/remove-user",upload.none(),(req,res)=>{
         let updatedAdmin = project.admin.filter(user=>{
             return user !== removeUser
         })
-        dbo.collection("projects").updateOne({_id:ObjectID(pid)},{$set:{users:updatedUsers,admin:updatedAdmin}},(err)=>{
+        let updatedTasks = project.tasks;
+        updatedTasks.forEach(task=>{
+            if(task.assignee === removeUser){
+                task.assignee ="";
+            }
+            if(task.watchers.includes(removeUser)){
+                task.watchers = task.watchers.filter(watcher=>{
+                    return watcher !== removeUser
+                })
+            }
+        })
+
+        dbo.collection("projects").updateOne({_id:ObjectID(pid)},{$set:{users:updatedUsers,admin:updatedAdmin, tasks:updatedTasks}},(err)=>{
                 if(err){
                     return res.send(JSON.stringify({success:false}))
                 }
@@ -649,7 +666,9 @@ app.post("/add-comment", upload.none(), (req, res) => {
     if (project === null) {
       return res.send(JSON.stringify({ success: false }));
     }
-    let timeStamp = new Date().toLocaleTimeString();
+    let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    let date = new Date().toLocaleDateString();
+    let timeStamp = currentTime + " - " + date;
     console.log("timeStamp:", timeStamp);
     let comment = { user, content: newComment, timeStamp };
     console.log("comment:", comment);
@@ -705,6 +724,8 @@ app.post("/update-task-status", upload.none(), (req, res) => {
   let pid = req.body.projectId;
   let taskName = req.body.taskName;
   let newStatus = req.body.newStatus;
+  let user = req.body.user;
+  let statusUpdateComment = {}
   console.log("new Status:", newStatus, " ,pid:", pid, " ,name:", taskName);
   dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
     if (err) {
@@ -716,13 +737,22 @@ app.post("/update-task-status", upload.none(), (req, res) => {
     let updatedTasks = project.tasks.map(task => {
       if (task.title === taskName) {
         task.status = newStatus;
+        //create a status update comment
+        let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        let date = new Date().toLocaleDateString();
+        let timeStamp = currentTime + " - " + date;
+        let content = `${user} has set this task to  ${newStatus}`;
+        statusUpdateComment = { user:"Placeholder", content, timeStamp };
+        //push this comment to the task object
+        task.comments.push(statusUpdateComment);
       }
       return task;
-    });
+    });    
+    
     dbo
       .collection("projects")
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
-    res.send(JSON.stringify({ success: true }));
+    res.send(JSON.stringify({ success: true, statusUpdateComment }));
   });
 });
 

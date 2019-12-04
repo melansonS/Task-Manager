@@ -10,6 +10,9 @@ let reducer = (state, action) => {
   if (action.type === "search") {
     return { ...state, searchQuery: action.query };
   }
+  if (action.type === "start-project") {
+    return { ...state, userData: action.newUserData };
+  }
 
   return state;
 };

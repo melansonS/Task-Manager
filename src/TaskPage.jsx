@@ -136,6 +136,7 @@ class UnconnedtedTaskPage extends Component {
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
     data.append("newStatus", newStatus);
+    data.append("user", this.props.user.username);
     let response = await fetch("/update-task-status", {
       method: "POST",
       body: data
@@ -143,8 +144,17 @@ class UnconnedtedTaskPage extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
-      this.setState({ status: newStatus });
+      let updatedTask = { ...this.state.task };
+      updatedTask.comments = updatedTask.comments.concat(
+        body.statusUpdateComment
+      );
+      this.setState({ status: newStatus, task: updatedTask });
+      console.log(body);
     }
+  };
+  //method passed to the comment section component to render the new comments on submit
+  renderComments = newTask => {
+    this.setState({ task: newTask });
   };
 
   handleDeleteTask = async () => {
@@ -207,7 +217,10 @@ class UnconnedtedTaskPage extends Component {
             </div>
           )}
 
-          <CommentSection task={this.state.task}></CommentSection>
+          <CommentSection
+            task={this.state.task}
+            renderComments={this.renderComments}
+          ></CommentSection>
         </div>
         <div className="task-menu">
           <div>

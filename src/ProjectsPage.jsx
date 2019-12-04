@@ -74,7 +74,14 @@ class UnconnectedProjectsPage extends Component {
     let response = await fetch("/new-project", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log(body);
+    console.log("start project response body:", body);
+    if (body.success) {
+      let updatedAdminProjects = this.state.adminProjects.concat(
+        body.newProject
+      );
+      this.setState({ adminProjects: updatedAdminProjects });
+      this.props.dispatch({ type: "start-project", newUserData: body.user });
+    }
   };
 
   render() {

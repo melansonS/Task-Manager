@@ -56,6 +56,7 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log(body);
+      this.setState({ addAdminUsername: "" });
     }
   };
 
@@ -81,6 +82,7 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log("Add admin response body:", body);
+      this.setState({ addAdminUsername: "" });
     }
   };
 
@@ -104,6 +106,7 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log("remove user response body:", body);
+      this.setState({ removeUserName: "" });
     } else {
       window.alert("Invalid user");
       this.setState({ removeUserName: "" });

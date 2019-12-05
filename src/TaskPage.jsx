@@ -58,6 +58,7 @@ class UnconnedtedTaskPage extends Component {
     data.append("assignee", this.state.newAssignee);
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
+    data.append("user", this.props.user.username);
     let response = await fetch("/reassign-task", {
       method: "POST",
       body: data

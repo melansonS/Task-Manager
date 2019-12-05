@@ -28,9 +28,35 @@ class UnconnectedLogin extends Component {
     if (body.success) {
       console.log("logging in!");
       this.props.dispatch({ type: "login-success", user: body.user });
+      this.getNotifications();
     }
     console.log("response body:", body);
   };
+  getNotifications = async () => {
+    console.log("notifications mount");
+    let data = new FormData();
+    data.append("user", this.state.username);
+    let response = await fetch("/get-notifications", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("get notifications reponse body:", body);
+    if (body.success) {
+      let unreadNotifications = 0;
+      body.notificationsArr.forEach(notification => {
+        if (!notification.read) {
+          unreadNotifications++;
+        }
+      });
+      this.props.dispatch({
+        type: "update-unread-notifications",
+        num: unreadNotifications
+      });
+    }
+  };
+
   openSignup = event => {
     this.setState({ signup: true });
   };

@@ -13,11 +13,19 @@ let reducer = (state, action) => {
   if (action.type === "start-project") {
     return { ...state, userData: action.newUserData };
   }
+  if (action.type === "update-unread-notifications") {
+    return { ...state, unreadNotifications: action.num };
+  }
 
   return state;
 };
 
-let initialState = { isLoggedIn: false, userData: {}, searchQuery: "" };
+let initialState = {
+  isLoggedIn: false,
+  userData: {},
+  searchQuery: "",
+  unreadNotifications: 0
+};
 
 let store = createStore(
   reducer,

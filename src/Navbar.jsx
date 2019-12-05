@@ -33,7 +33,7 @@ class UnconnectNavbar extends Component {
             <div>Todo</div>
           </Link>
         </div>
-        <Link to="/home">
+        <Link to="/">
           <img
             src="\img\placeholder.com-logo3.png"
             style={{ height: "40px" }}

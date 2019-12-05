@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 class UnconnectedUserIcon extends Component {
   constructor(props) {
@@ -96,6 +97,7 @@ class UnconnectedUserIcon extends Component {
       <div>
         <div onClick={this.handleShowMenu}>
           ICON for {this.props.user.username}
+          {this.props.unreadN > 0 && <span>(N{this.props.unreadN})</span>}
         </div>
         {this.state.showMenu && (
           <div className="icon-menu">
@@ -103,6 +105,9 @@ class UnconnectedUserIcon extends Component {
               <h4>User Icon Menu</h4>
               <button onClick={this.handleMenuClose}>x</button>
             </div>
+            <Link to="/notifications" onClick={this.handleMenuClose}>
+              Notifications
+            </Link>
             <button onClick={this.handleShowUserSettings}>User Settings</button>
             <button onClick={this.handleLogout}>Log out</button>
             {this.state.showUserSettings && (
@@ -141,7 +146,7 @@ class UnconnectedUserIcon extends Component {
   }
 }
 let mapStateToProps = st => {
-  return { user: st.userData };
+  return { user: st.userData, unreadN: st.unreadNotifications };
 };
 
 let UserIcon = connect(mapStateToProps)(UnconnectedUserIcon);

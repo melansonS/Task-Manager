@@ -27,6 +27,23 @@ let generateSID = () => {
   return Math.floor(Math.random() * 100000000);
 };
 
+let sendNotifications = (users, notification) =>{
+    //takes an array of users, and pushes a new notification object to their 
+    //instance in the notifications collection on the db
+    console.log("SENDING:",notification, "TO :",users)
+    users.forEach(username =>{
+        dbo.collection("notifications").findOne({username},(err,user)=>{
+            if(err){return {success:false}}
+            if(user ===null){return {success:false}}
+            let updatedNotifications = user.notifications
+            updatedNotifications.push(notification)
+            dbo.collection("notifications").updateOne({username},{$set:{notifications:updatedNotifications}})
+            return ({success:true})
+        })
+    })
+    
+}
+
 // Your endpoints go after this line
 app.post("/signup", upload.none(), (req, res) => {
   console.log("SINGUP HIT========");
@@ -44,6 +61,7 @@ app.post("/signup", upload.none(), (req, res) => {
       res.send(JSON.stringify({ success: false, usernameTake: true }));
       return;
     }
+    //if the username is not already taken, insert the new user's data into the users collection
     dbo
       .collection("users")
       .insertOne({ username, email, password, projects: {} });
@@ -51,6 +69,8 @@ app.post("/signup", upload.none(), (req, res) => {
     dbo.collection("cookies").insertOne({ sid, username });
     res.cookie("sid", sid);
     res.send(JSON.stringify({ success: true }));
+    // create a notification object for the user in the notifications collection
+    dbo.collection("notifications").insertOne({username, notifications:[]})
   });
 });
 
@@ -319,6 +339,37 @@ app.post("/get-todos", upload.none(), (req, res) => {
     });
 });
 
+app.post("/get-notifications",upload.none(),(req,res)=>{
+    // console.log("GET NOTIFICATIONS HIT")
+    let username = req.body.user
+    dbo.collection("notifications").findOne({username},(err,notificationObj)=>{
+        if(err){return res.send(JSON.stringify({success:false}))}
+        if(notificationObj === null){return res.send(JSON.stringify({success:false}))}
+        let notificationsArr = notificationObj.notifications
+        return res.send(JSON.stringify({success:true, notificationsArr}))
+    })
+})
+app.post("/mark-as-read",upload.none(),(req,res)=>{
+    console.log("MARK AS READ HIT")
+    let nid = req.body.notificationId
+    let username = req.body.user
+    dbo.collection("notifications").findOne({username},(err,notificationObj)=>{        
+        if(err){return res.send(JSON.stringify({success:false}))}
+        if(notificationObj === null){return res.send(JSON.stringify({success:false}))}
+        let updatedNotifications = notificationObj.notifications.map( notification =>{
+            if(notification._id.toString() === nid.toString()){
+                notification.read = true
+            }
+            return notification
+        })
+        dbo.collection("notifications").findOneAndUpdate({username},{$set:{notifications:updatedNotifications}},{returnOriginal:false},(err,updatedNotifs)=>{
+        if(err){return res.send(JSON.stringify({success:false}))}
+        let notificationsArr = updatedNotifs.value.notifications
+        return res.send(JSON.stringify({success:true, notificationsArr }))
+        })
+    })
+})
+
 app.post("/add-user", upload.none(), (req, res) => {
   console.log("ADD-USER HIT====");
   let id = req.body.projectId;
@@ -549,6 +600,7 @@ app.post("/reassign-task", upload.none(), (req, res) => {
   let pid = req.body.projectId;
   let taskName = req.body.taskName;
   let assignee = req.body.assignee;
+  let username = req.body.user
 
   dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
     if (err) {
@@ -580,6 +632,23 @@ app.post("/reassign-task", upload.none(), (req, res) => {
           if (err) {
             return res.send(JSON.stringify({ success: false }));
           }
+          if(assignee !== username){
+            let notifMessage = "You have been assigned a new task:" + taskName;
+            let notifUrl = "/project/" + pid + "-" + taskName
+            let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let date = new Date().toLocaleDateString();
+            let timeStamp = currentTime + " - " + date;
+            let notification = {
+                _id:generateSID(),
+                content:notifMessage,
+                url:notifUrl,
+                timeStamp,
+                read:false
+            }
+            sendNotifications([assignee],notification);
+          }
+          
+
           return res.send(JSON.stringify({ success: true }));
         }
       );
@@ -659,6 +728,8 @@ app.post("/add-comment", upload.none(), (req, res) => {
   let taskName = req.body.taskName;
   let user = req.body.user;
   let newComment = req.body.newComment;
+  let timeStamp = ""
+  let watchers = []
   dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
     if (err) {
       return res.send(JSON.stringify({ success: false }));
@@ -668,7 +739,7 @@ app.post("/add-comment", upload.none(), (req, res) => {
     }
     let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     let date = new Date().toLocaleDateString();
-    let timeStamp = currentTime + " - " + date;
+    timeStamp = currentTime + " - " + date;
     console.log("timeStamp:", timeStamp);
     let comment = { user, content: newComment, timeStamp };
     console.log("comment:", comment);
@@ -677,6 +748,9 @@ app.post("/add-comment", upload.none(), (req, res) => {
       if (task.title === taskName) {
         task.comments.push(comment);
         modifiedTask = task;
+        //establish who the task watcher are, as they will be sent a notification
+        watchers = task.watchers.slice();
+        watchers.push(task.assignee)
       }
       return task;
     });
@@ -689,6 +763,21 @@ app.post("/add-comment", upload.none(), (req, res) => {
           if (err) {
             return res.send(JSON.stringify({ success: false }));
           }
+          //set up the notification object
+          let notifMessage = user + " has left a comment on a task you are watching:" + taskName;
+          let notifUrl = "/project/" + pid + "-" + taskName
+          watchers = watchers.filter( watcher =>{
+              return watcher !== user;
+          })
+          let notification = {
+              _id:generateSID(),
+              content:notifMessage,
+              url:notifUrl,
+              timeStamp,
+              read:false
+          }
+          //send notification to watchers
+          sendNotifications(watchers,notification);
           return res.send(JSON.stringify({ success: true, modifiedTask }));
         }
       );
@@ -726,6 +815,8 @@ app.post("/update-task-status", upload.none(), (req, res) => {
   let newStatus = req.body.newStatus;
   let user = req.body.user;
   let statusUpdateComment = {}
+  let timeStamp = "";
+  let watchers = []
   console.log("new Status:", newStatus, " ,pid:", pid, " ,name:", taskName);
   dbo.collection("projects").findOne({ _id: ObjectID(pid) }, (err, project) => {
     if (err) {
@@ -740,11 +831,14 @@ app.post("/update-task-status", upload.none(), (req, res) => {
         //create a status update comment
         let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         let date = new Date().toLocaleDateString();
-        let timeStamp = currentTime + " - " + date;
+        timeStamp = currentTime + " - " + date;
         let content = `${user} has set this task to  ${newStatus}`;
         statusUpdateComment = { user:"Placeholder", content, timeStamp };
         //push this comment to the task object
         task.comments.push(statusUpdateComment);
+        //establish who to send a notification to
+        watchers = task.watchers.slice()
+        watchers.push(task.assignee);
       }
       return task;
     });    
@@ -752,7 +846,23 @@ app.post("/update-task-status", upload.none(), (req, res) => {
     dbo
       .collection("projects")
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
-    res.send(JSON.stringify({ success: true, statusUpdateComment }));
+      //set up the notification message
+      let notifMessage = user + " has set the status of a task you are watching to "+newStatus+":" + taskName;
+      let notifUrl = "/project/" + pid + "-" + taskName
+      //filter out the user, so that they don't get notified of updates they've made...
+      watchers = watchers.filter( watcher =>{
+          return watcher !== user;
+      })
+      let notification = {
+          _id:generateSID(),
+          content:notifMessage,
+          url:notifUrl,
+          timeStamp,
+          read:false
+      }
+      //send it to task watchers
+      sendNotifications(watchers,notification)
+   return res.send(JSON.stringify({ success: true, statusUpdateComment }));
   });
 });
 

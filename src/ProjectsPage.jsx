@@ -79,7 +79,12 @@ class UnconnectedProjectsPage extends Component {
       let updatedAdminProjects = this.state.adminProjects.concat(
         body.newProject
       );
-      this.setState({ adminProjects: updatedAdminProjects });
+      this.setState({
+        adminProjects: updatedAdminProjects,
+        newProjectTitle: "",
+        newProjectDescription: "",
+        newProjectTags: ""
+      });
       this.props.dispatch({ type: "start-project", newUserData: body.user });
     }
   };
@@ -112,18 +117,21 @@ class UnconnectedProjectsPage extends Component {
               <input
                 type="text"
                 onChange={this.handleTitleChange}
+                value={this.state.newProjectTitle}
                 required
               ></input>
               Description:
               <input
                 type="text"
                 onChange={this.handleDescChange}
+                value={this.state.newProjectDescription}
                 required
               ></input>
               Tags:
               <input
                 type="text"
                 onChange={this.handleTagsChange}
+                value={this.state.newProjectTags}
                 required
               ></input>
               Color:

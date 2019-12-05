@@ -63,3 +63,8 @@ body {
 .task-menu div {
   margin-bottom: 15px;
 }
+
+.project-hub-body {
+  display: flex;
+  justify-content: space-between;
+}

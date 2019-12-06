@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 
 import UserIcon from "./UserIcon.jsx";
+import { IoIosSearch } from "react-icons/io";
 
 class UnconnectNavbar extends Component {
   constructor(props) {
@@ -26,10 +27,10 @@ class UnconnectNavbar extends Component {
       <div className="navbar">
         <UserIcon></UserIcon>
         <div className="navbar-buttons">
-          <Link to="/projects">
+          <Link to="/projects" className="navbar-buttons">
             <div>Projects</div>
           </Link>
-          <Link to="/todo">
+          <Link to="/todo" className="navbar-buttons">
             <div>Todo</div>
           </Link>
         </div>
@@ -39,14 +40,22 @@ class UnconnectNavbar extends Component {
             style={{ height: "40px" }}
           />
         </Link>
+        <div></div>
+
         <form onSubmit={this.handleSearchSubmit}>
           <input
             type="text"
-            placeholder="search"
+            placeholder="search..."
             value={this.state.searchQuery}
             onChange={this.handleSearchChange}
           ></input>
-          <input type="submit"></input>
+
+          {/* ////////////////////////////////////////SEARCH ICON -> USING A LABEL WITH AN ICON TO DISPLAY */}
+          {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
+          <button id="search" style={{ display: "none" }}></button>
+          <label for="search">
+            <IoIosSearch style={{ margin: "0px 10px", fontSize: "20px" }} />
+          </label>
         </form>
       </div>
     );

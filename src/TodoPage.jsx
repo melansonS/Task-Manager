@@ -37,6 +37,12 @@ class UnconnectedTodoPage extends Component {
         <TaskCard task={task} projectId={task.pid}></TaskCard>
       );
     });
+    //sorts them from nearest to furthest due date!
+    taskCardElems.sort((a, b) => {
+      let dueDateA = new Date(a.props.task.dueDate) / 1;
+      let dueDateB = new Date(b.props.task.dueDate) / 1;
+      return dueDateA - dueDateB;
+    });
     return <div>All of your Todos!{taskCardElems}</div>;
   }
 }

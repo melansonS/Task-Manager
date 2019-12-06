@@ -24,6 +24,7 @@ class UnonnectedApp extends Component {
     console.log("AutoLogin:", body);
     if (body.success) {
       this.props.dispatch({ type: "login-success", user: body.user });
+      this.getNotifications();
       this.notificationCheck();
     }
   };

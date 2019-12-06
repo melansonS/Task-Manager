@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import ProjectCard from "./ProjectCard.jsx";
 
+import { AiOutlinePlusCircle } from "react-icons/ai";
+
 class UnconnectedProjectsPage extends Component {
   constructor(props) {
     super(props);
@@ -106,9 +108,17 @@ class UnconnectedProjectsPage extends Component {
           <h3>User projects</h3>
           {userProjectCardElems}
         </div>
-        <button onClick={this.handleStartProject}>
-          Start a new project! +
-        </button>
+        Start a new project!
+        {/* ////////////////////////////////////////ADD PROJECT BUTTON -> USING A LABEL WITH AND ICON TO DISPLAY */}
+        {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
+        <button
+          onClick={this.handleStartProject}
+          id="add-project"
+          style={{ display: "none" }}
+        ></button>
+        <label for="add-project">
+          <AiOutlinePlusCircle style={{ fontSize: "40px", color: "grey" }} />
+        </label>
         {this.state.showStartProjectForm && (
           <div>
             <form onSubmit={this.handleStartProjectSubmit}>

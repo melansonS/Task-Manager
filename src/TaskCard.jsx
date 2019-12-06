@@ -16,15 +16,15 @@ class UnconnectedTaskCard extends Component {
           <div>
             <h3>{this.props.task.title}</h3>
             <div>
-              <b>Assigned to:</b>
+              <b>Assigned to: </b>
               {this.props.task.assignee}
             </div>
             <div>
-              <b>Status:</b>
+              <b>Status: </b>
               {this.props.task.status}
             </div>
             <div>
-              <b>Due:</b>
+              <b>Due: </b>
               {this.props.task.dueDate}
             </div>
           </div>

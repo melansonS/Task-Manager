@@ -70,6 +70,7 @@ class UnconnectedNotifications extends Component {
         <Link
           to={notification.url}
           onClick={() => {
+            this.props.closeMenu();
             if (!notification.read) this.markAsRead(notification._id);
           }}
         >

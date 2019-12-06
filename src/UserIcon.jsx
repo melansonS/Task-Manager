@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Notifications from "./Notifications.jsx";
 import "./main.css";
 
+import { IoMdPerson } from "react-icons/io";
+
 class UnconnectedUserIcon extends Component {
   constructor(props) {
     super(props);
@@ -97,9 +99,13 @@ class UnconnectedUserIcon extends Component {
   render() {
     return (
       <div>
-        <div onClick={this.handleShowMenu}>
-          ICON for {this.props.user.username}
-          {this.props.unreadN > 0 && <span>(N{this.props.unreadN})</span>}
+        <div onClick={this.handleShowMenu} className="navbar-user">
+          <IoMdPerson className="user-icon" /> {this.props.user.username}
+          {this.props.unreadN > 0 && (
+            <div className="unread-notifications-count">
+              {this.props.unreadN}
+            </div>
+          )}
         </div>
         {this.state.showMenu && (
           <div className="icon-menu">
@@ -114,7 +120,7 @@ class UnconnectedUserIcon extends Component {
               <Link to="/notifications" onClick={this.handleMenuClose}>
                 Notifications
               </Link>
-              <Notifications></Notifications>
+              <Notifications closeMenu={this.handleMenuClose}></Notifications>
             </div>
             {this.state.showUserSettings && (
               <div>

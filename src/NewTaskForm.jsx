@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { AiOutlineFolderAdd } from "react-icons/ai";
 
 class UnconnectedNewTaskForm extends Component {
   constructor(props) {
@@ -76,11 +77,15 @@ class UnconnectedNewTaskForm extends Component {
           ></input>
           Relevant images:
           <input
+            id="image-files"
             type="file"
             onChange={this.handleFileChange}
             multiple
             value={this.state.files}
           ></input>
+          <label for="image-files">
+            <AiOutlineFolderAdd></AiOutlineFolderAdd>
+          </label>
           <input type="submit"></input>
         </form>
       </div>

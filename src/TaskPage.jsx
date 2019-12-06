@@ -205,8 +205,8 @@ class UnconnedtedTaskPage extends Component {
     return (
       <div className="task-page">
         <div className="task-body">
-          <h2>Title:</h2>
-          {this.state.task.title}
+          <h2>{this.state.task.title}</h2>
+
           <h4>Description:</h4>
           <textarea
             rows="10"

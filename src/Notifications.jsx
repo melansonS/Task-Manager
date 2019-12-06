@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import "./main.css";
 
 class UnconnectedNotifications extends Component {
   constructor(props) {
@@ -61,6 +62,10 @@ class UnconnectedNotifications extends Component {
   };
   render() {
     let notificationElems = this.state.notifications.map(notification => {
+      let notifClass = "notification-unread";
+      if (notification.read) {
+        notifClass = "notification-read";
+      }
       return (
         <Link
           to={notification.url}
@@ -68,9 +73,11 @@ class UnconnectedNotifications extends Component {
             if (!notification.read) this.markAsRead(notification._id);
           }}
         >
-          <b>{notification.content}</b>
-          <i>{notification.timeStamp}</i>
-          <p>Read:{notification.read + ""}</p>
+          <div className={notifClass}>
+            <p>{notification.content}</p>
+            <i>{notification.timeStamp}</i>
+            {/* <p>Read:{notification.read + ""}</p> */}
+          </div>
         </Link>
       );
     });

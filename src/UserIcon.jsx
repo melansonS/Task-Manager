@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import Notifications from "./Notifications.jsx";
+import "./main.css";
 
 class UnconnectedUserIcon extends Component {
   constructor(props) {
@@ -105,11 +107,15 @@ class UnconnectedUserIcon extends Component {
               <h4>User Icon Menu</h4>
               <button onClick={this.handleMenuClose}>x</button>
             </div>
-            <Link to="/notifications" onClick={this.handleMenuClose}>
-              Notifications
-            </Link>
+
             <button onClick={this.handleShowUserSettings}>User Settings</button>
             <button onClick={this.handleLogout}>Log out</button>
+            <div>
+              <Link to="/notifications" onClick={this.handleMenuClose}>
+                Notifications
+              </Link>
+              <Notifications></Notifications>
+            </div>
             {this.state.showUserSettings && (
               <div>
                 Update Email:

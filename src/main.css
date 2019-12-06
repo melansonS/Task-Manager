@@ -1,6 +1,12 @@
 body {
-  background-color: #bbb;
+  background-color: rgb(253, 253, 253);
   margin: 0;
+}
+* {
+  font-family: "Montserrat", sans-serif;
+}
+* a {
+  text-decoration: none;
 }
 
 .overlay {
@@ -38,8 +44,11 @@ body {
 }
 
 .icon-menu {
-  background-color: #fff;
+  background-color: rgb(238, 238, 238);
   position: absolute;
+  width: 20vw;
+  height: 70vh;
+  overflow: auto;
   left: 1vw;
   z-index: 1;
 }
@@ -67,4 +76,15 @@ body {
 .project-hub-body {
   display: flex;
   justify-content: space-between;
+}
+
+.notification-unread {
+  font-weight: bold;
+}
+.notification-read {
+  font-weight: lighter;
+}
+.notification-read:hover,
+.notification-unread:hover {
+  background-color: rgb(241, 241, 241);
 }

@@ -25,6 +25,13 @@ class UnconnedtedTaskPage extends Component {
   componentDidMount() {
     this.getTaskData();
   }
+
+  componentDidUpdate = prevProps => {
+    if (prevProps.taskName !== this.props.taskName) {
+      console.log("updating url");
+      this.getTaskData();
+    }
+  };
   getTaskData = async () => {
     let data = new FormData();
     data.append("projectId", this.props.projectId);
@@ -32,7 +39,7 @@ class UnconnedtedTaskPage extends Component {
     let response = await fetch("/task-data", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log(body);
+    console.log("get task data response body:", body);
     if (body.success) {
       this.setState({
         task: body.taskData,
@@ -42,6 +49,7 @@ class UnconnedtedTaskPage extends Component {
         newDescription: body.taskData.description,
         newDueDate: body.taskData.dueDate
       });
+      console.log("task.description:", this.state.task.description);
       if (this.props.user.projects[this.props.projectId] === "admin") {
         console.log("is admin!");
         this.setState({ admin: true });
@@ -92,7 +100,7 @@ class UnconnedtedTaskPage extends Component {
   };
 
   submitDescription = event => {
-    event.preventDefault();
+    // event.preventDefault();
     console.log(this.state.newDescription);
     let data = new FormData();
     data.append("projectId", this.props.projectId);
@@ -200,17 +208,22 @@ class UnconnedtedTaskPage extends Component {
           <h2>Title:</h2>
           {this.state.task.title}
           <h4>Description:</h4>
-          <form onSubmit={this.submitDescription}>
-            <textarea
-              rows="10"
-              cols="80"
-              readOnly={!this.state.admin}
-              onChange={this.handleDescriptionChange}
-            >
-              {this.state.task.description}
-            </textarea>
-            {this.state.admin && <input type="submit"></input>}
-          </form>
+          <textarea
+            rows="10"
+            cols="80"
+            // readOnly={!this.state.admin}
+            onChange={this.handleDescriptionChange}
+            value={this.state.newDescription}
+            onBlur={() => {
+              if (this.state.admin) {
+                if (this.state.newDescription !== this.state.task.description) {
+                  console.log("updating description on blur!");
+                  this.submitDescription();
+                }
+              }
+            }}
+          ></textarea>
+          {/* Displays the images set upon task creation, if any were submitted */}
           {posts && (
             <div className="task-posts">
               <h3>Posts:</h3>

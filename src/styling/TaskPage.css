@@ -1,0 +1,24 @@
+.task-page {
+  display: flex;
+  justify-content: center;
+}
+.task-body {
+  position: relative;
+  margin-right: 3vw;
+  /* width: 43vw; */
+}
+.task-body textarea {
+  border: none;
+  resize: vertical;
+}
+
+.task-posts {
+  display: flex;
+}
+.task-posts img {
+  height: 90px;
+}
+
+.task-menu div {
+  margin-bottom: 15px;
+}

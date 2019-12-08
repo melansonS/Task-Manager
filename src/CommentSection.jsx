@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import "./styling/commentSection.css";
 
 class UnconnectedCommentSection extends Component {
   constructor(props) {
@@ -14,6 +15,9 @@ class UnconnectedCommentSection extends Component {
   };
   handleCommentSubmit = async event => {
     event.preventDefault();
+    if (this.state.newComment === "") {
+      return;
+    }
     console.log("Uploading comment:", this.state.newComment);
     let data = new FormData();
     data.append("projectId", this.props.task.pid);
@@ -31,29 +35,35 @@ class UnconnectedCommentSection extends Component {
   };
 
   render() {
-    let commentElems = <div>no comments</div>;
+    let commentElems = (
+      <div className="no-comments">There are no comments yet</div>
+    );
     if (this.props.task.comments.length > 0) {
       commentElems = this.props.task.comments.map(comment => {
         return (
-          <div>
-            <b>{comment.user}:</b>
-            <p>{comment.content}</p>
-            <i>{comment.timeStamp}</i>
+          <div className="comment">
+            <div className="comment-header">
+              <b>{comment.user}:</b> <i> {comment.timeStamp}</i>
+            </div>
+            <p className="comment-content">{comment.content}</p>
           </div>
         );
       });
     }
     return (
       <div>
-        <h3>comment section:</h3>
         {commentElems}
         <form onSubmit={this.handleCommentSubmit}>
-          <input
-            type="text"
-            onChange={this.handleCommentChange}
-            value={this.state.newComment}
-          ></input>
-          <button>Submit</button>
+          <div className="comment-box">
+            <input
+              type="text"
+              onChange={this.handleCommentChange}
+              value={this.state.newComment}
+              placeholder="Write a comment..."
+              className="comment-box-text"
+            ></input>
+            <button>Submit</button>
+          </div>
         </form>
       </div>
     );

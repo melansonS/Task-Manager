@@ -7,6 +7,10 @@ body {
 }
 * a {
   text-decoration: none;
+  color: black;
+}
+a:hover {
+  text-decoration: underline;
 }
 
 .overlay {
@@ -31,13 +35,19 @@ body {
 .navbar {
   background-color: #eee;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
+  padding: 2vh;
 }
 
 .navbar-buttons {
   display: flex;
   justify-content: center;
+  padding: 10px 10px 0px 10px;
+}
+.navbar-buttons div {
+  padding: 0px 2vw 0px 2vw;
+  font-weight: bold;
 }
 .navbar-buttons a {
   margin: 0 5px;
@@ -60,27 +70,9 @@ body {
 .icon-menu-header {
   display: flex;
 }
-.task-page {
-  display: flex;
-}
-.task-body {
-  position: relative;
-}
-
-.task-posts {
-  display: flex;
-}
-.task-posts img {
-  height: 90px;
-}
-
-.task-menu div {
-  margin-bottom: 15px;
-}
-
 .project-hub-body {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 .navbar-user {
   display: flex;

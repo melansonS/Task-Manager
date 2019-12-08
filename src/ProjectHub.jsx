@@ -185,11 +185,12 @@ class UnconnectedProjectHub extends Component {
 
     return (
       <div className="project-hub">
-        Project Hub! id:{this.props.id}
         <div className="project-banner">
           <div style={{ backgroundColor: this.state.project.color }}>
-            <b>Title:</b>
-            {this.state.project.title}
+            <h1>
+              Title:
+              {this.state.project.title}
+            </h1>
           </div>
           <b>Description:</b>
           {this.state.project.description}
@@ -202,25 +203,25 @@ class UnconnectedProjectHub extends Component {
           <div className="project-tasks">
             {newTasks.length > 0 && (
               <div className="project-hub-new-tasks">
-                <h1>New Tasks</h1>
+                <h2>New Tasks</h2>
                 {newTasks}
               </div>
             )}
             {inProgressTasks.length > 0 && (
               <div className="project-hub-in-progress-tasks">
-                <h1>In Progress</h1>
+                <h2>In Progress</h2>
                 {inProgressTasks}
               </div>
             )}
             {onHoldTasks.length > 0 && (
               <div className="project-hub-on-hold-tasks">
-                <h1>On Hold</h1>
+                <h2>On Hold</h2>
                 {onHoldTasks}
               </div>
             )}
             {completedTasks.length > 0 && (
               <div className="project-hub-completed-tasks">
-                <h1>Completed</h1>
+                <h2>Completed</h2>
                 {completedTasks}
               </div>
             )}

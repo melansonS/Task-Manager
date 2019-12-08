@@ -20,7 +20,7 @@ class UnconnectedProjectCard extends Component {
           <div>
             <b>color:</b>
             <div
-              //   STYLING DONE HERE FOR THE TIME BEING<TESTING PURPOSES ONLY>
+              //STYLING DONE HERE FOR THE TIME BEING<TESTING PURPOSES ONLY>
               style={{
                 backgroundColor: this.props.project.color,
                 height: "17px",

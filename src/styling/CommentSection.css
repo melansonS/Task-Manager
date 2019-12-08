@@ -1,0 +1,26 @@
+.comment {
+  margin-bottom: 1vh;
+  border-bottom: 1px black solid;
+  border-bottom-right-radius: 10px;
+}
+.no-comments {
+  color: rgb(117, 117, 117);
+  font-style: italic;
+}
+
+.comment-header i {
+  font-size: smaller;
+  color: rgb(117, 117, 117);
+}
+
+.comment-box {
+  margin: 2vh 0vh;
+  display: flex;
+  height: 40px;
+}
+.comment-box-text {
+  flex-grow: 2;
+}
+.comment-box-text:focus {
+  outline: none;
+}

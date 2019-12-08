@@ -27,10 +27,10 @@ class UnconnectNavbar extends Component {
       <div className="navbar">
         <UserIcon></UserIcon>
         <div className="navbar-buttons">
-          <Link to="/projects" className="navbar-buttons">
+          <Link to="/projects">
             <div>Projects</div>
           </Link>
-          <Link to="/todo" className="navbar-buttons">
+          <Link to="/todo">
             <div>Todo</div>
           </Link>
         </div>

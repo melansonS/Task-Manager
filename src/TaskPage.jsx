@@ -4,6 +4,7 @@ import { Link, withRouter } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import CommentSection from "./CommentSection.jsx";
 import "./main.css";
+import "./styling/TaskPage.css";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -272,7 +273,7 @@ class UnconnedtedTaskPage extends Component {
             </div>
           </div>
           <div>
-            Status:
+            <b>Status:</b>
             <select onChange={this.updateStatus} value={this.state.status}>
               <option value="New">New</option>
               <option value="In Progress">In Progress</option>
@@ -283,8 +284,9 @@ class UnconnedtedTaskPage extends Component {
           {this.state.admin && (
             <button onClick={this.handleDeleteTask}>Delete task</button>
           )}
-
+          <div>
           <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
+          </div>
         </div>
       </div>
     );

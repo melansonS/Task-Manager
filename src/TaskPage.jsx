@@ -212,7 +212,7 @@ class UnconnedtedTaskPage extends Component {
           <textarea
             rows="10"
             cols="80"
-            // readOnly={!this.state.admin}
+            readOnly={!this.state.admin}
             onChange={this.handleDescriptionChange}
             value={this.state.newDescription}
             onBlur={() => {
@@ -245,6 +245,19 @@ class UnconnedtedTaskPage extends Component {
           <div>
             <b>Due date:</b>
             <DatePicker
+              popperPlacement="bottom"
+              popperModifiers={{
+                flip: {
+                  behavior: ["bottom"] // don't allow it to flip to be above
+                },
+                preventOverflow: {
+                  enabled: false // tell it not to try to stay within the view (this prevents the popper from covering the element you clicked)
+                },
+                hide: {
+                  enabled: false // turn off since needs preventOverflow to be enabled
+                }
+              }}
+              d
               selected={this.state.today}
               onChange={this.handleDateChange}
               value={this.state.newDueDate}
@@ -285,7 +298,7 @@ class UnconnedtedTaskPage extends Component {
             <button onClick={this.handleDeleteTask}>Delete task</button>
           )}
           <div>
-          <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
+            <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
           </div>
         </div>
       </div>

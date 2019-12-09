@@ -19,8 +19,10 @@ class UnconnectedUserIcon extends Component {
   }
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
+    // document.addEventListener("click", this.handleKeyDown);
   }
   handleKeyDown = event => {
+    console.log("event listener event:", event.target);
     if (event.key === "Escape") {
       console.log("esacpe hit");
       this.handleMenuClose();
@@ -116,10 +118,11 @@ class UnconnectedUserIcon extends Component {
 
             <button onClick={this.handleShowUserSettings}>User Settings</button>
             <button onClick={this.handleLogout}>Log out</button>
-            <div>
+            <div className="menu-notifications">
               <Link to="/notifications" onClick={this.handleMenuClose}>
                 Notifications
               </Link>
+
               <Notifications closeMenu={this.handleMenuClose}></Notifications>
             </div>
             {this.state.showUserSettings && (

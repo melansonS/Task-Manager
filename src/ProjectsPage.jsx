@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import ProjectCard from "./ProjectCard.jsx";
+import "./styling/ProjectsPage.css";
 
 import { AiOutlinePlusCircle } from "react-icons/ai";
 
@@ -18,10 +19,18 @@ class UnconnectedProjectsPage extends Component {
     };
   }
   componentDidMount() {
+    document.addEventListener("click", this.handleModalClick);
     if (Object.keys(this.props.user.projects)[0] !== undefined) {
       this.getProjects();
     }
   }
+
+  handleModalClick = event => {
+    let modal = document.getElementsByClassName("start-project-modal")[0];
+    if (event.target === modal) {
+      this.handleHideProjectForm();
+    }
+  };
 
   getProjects = async () => {
     console.log("Getting user's projects:", this.props.user.projects);
@@ -99,7 +108,7 @@ class UnconnectedProjectsPage extends Component {
       return <ProjectCard project={proj}></ProjectCard>;
     });
     return (
-      <div>
+      <div className="projects-page-body">
         <div>
           <h1>Admin Projects</h1>
           {adminProjectCardElems}
@@ -108,47 +117,62 @@ class UnconnectedProjectsPage extends Component {
           <h3>User projects</h3>
           {userProjectCardElems}
         </div>
-        Start a new project!
         {/* ////////////////////////////////////////ADD PROJECT BUTTON -> USING A LABEL WITH AND ICON TO DISPLAY */}
         {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
-        <button
-          onClick={this.handleStartProject}
-          id="add-project"
-          style={{ display: "none" }}
-        ></button>
-        <label for="add-project">
-          <AiOutlinePlusCircle style={{ fontSize: "40px", color: "grey" }} />
-        </label>
+
+        <div for="add-project">
+          <div className="add-project-label" onClick={this.handleStartProject}>
+            <p>Start a new project!</p>
+            <AiOutlinePlusCircle />
+          </div>
+        </div>
         {this.state.showStartProjectForm && (
-          <div>
-            <form onSubmit={this.handleStartProjectSubmit}>
-              <h3>Start project form..</h3>
-              Title:
-              <input
-                type="text"
-                onChange={this.handleTitleChange}
-                value={this.state.newProjectTitle}
-                required
-              ></input>
-              Description:
-              <input
-                type="text"
-                onChange={this.handleDescChange}
-                value={this.state.newProjectDescription}
-                required
-              ></input>
-              Tags:
-              <input
-                type="text"
-                onChange={this.handleTagsChange}
-                value={this.state.newProjectTags}
-                required
-              ></input>
-              Color:
-              <input type="color" onChange={this.handleColorChange}></input>
-              <input type="submit"></input>
-            </form>
-            <button onClick={this.handleHideProjectForm}>cancel</button>
+          <div className="start-project-modal">
+            <div className="start-project-modal-content">
+              <h3>New Project</h3>
+              <form onSubmit={this.handleStartProjectSubmit}>
+                <div>
+                  {/* <h4>Title:</h4> */}
+                  <input
+                    type="text"
+                    onChange={this.handleTitleChange}
+                    value={this.state.newProjectTitle}
+                    placeholder="Title"
+                    required
+                  ></input>
+                </div>
+                <div>
+                  <h4> Description:</h4>
+                  <textarea
+                    rows="10"
+                    type="text"
+                    onChange={this.handleDescChange}
+                    placeholder="Brief description of your project..."
+                    value={this.state.newProjectDescription}
+                    required
+                  ></textarea>
+                </div>
+                <div>
+                  {/* <h4>Tags:</h4> */}
+                  <input
+                    type="text"
+                    onChange={this.handleTagsChange}
+                    value={this.state.newProjectTags}
+                    placeholder="List of Tags..."
+                    required
+                  ></input>
+                </div>
+                <input type="submit"></input>
+              </form>
+
+              <div
+                for="modal-close"
+                className="close"
+                onClick={this.handleHideProjectForm}
+              >
+                X
+              </div>
+            </div>
           </div>
         )}
       </div>

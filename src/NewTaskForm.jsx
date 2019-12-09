@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { AiOutlineFolderAdd } from "react-icons/ai";
+import "./styling/NewTaskForm.css";
 
 class UnconnectedNewTaskForm extends Component {
   constructor(props) {
@@ -51,41 +52,53 @@ class UnconnectedNewTaskForm extends Component {
 
   render() {
     return (
-      <div>
+      <div className="new-task-form">
         <h3>New Task form!</h3>
         <form onSubmit={this.handleNewTaskSubmit}>
-          Title:
-          <input
-            type="text"
-            required
-            onChange={this.handleTitleChange}
-            value={this.state.title}
-          ></input>
-          Description:
-          <input
-            type="text"
-            required
-            onChange={this.handleDescChange}
-            value={this.state.description}
-          ></input>
-          Tags:
-          <input
-            type="text"
-            required
-            onChange={this.handleTagsChange}
-            value={this.state.tags}
-          ></input>
-          Relevant images:
-          <input
-            id="image-files"
-            type="file"
-            onChange={this.handleFileChange}
-            multiple
-            value={this.state.files}
-          ></input>
-          <label for="image-files">
-            <AiOutlineFolderAdd></AiOutlineFolderAdd>
-          </label>
+          <div>
+            <input
+              type="text"
+              required
+              onChange={this.handleTitleChange}
+              value={this.state.title}
+              placeholder="Title"
+            ></input>
+          </div>
+          <div>
+            <h4>Description:</h4>
+            <textarea
+              type="text"
+              rows="10"
+              required
+              onChange={this.handleDescChange}
+              value={this.state.description}
+              placeholder="Task description..."
+            ></textarea>
+          </div>
+          <div>
+            <input
+              type="text"
+              required
+              onChange={this.handleTagsChange}
+              placeholder="List of Tags"
+              value={this.state.tags}
+            ></input>
+          </div>
+          <div className="new-task-files">
+            <b>Relevant images:</b>
+            <input
+              id="image-files"
+              type="file"
+              onChange={this.handleFileChange}
+              multiple
+              value={this.state.files}
+              style={{ display: "none" }}
+            ></input>
+            <label for="image-files">
+              <AiOutlineFolderAdd></AiOutlineFolderAdd>
+            </label>
+          </div>
+
           <input type="submit"></input>
         </form>
       </div>

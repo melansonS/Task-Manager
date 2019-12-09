@@ -31,13 +31,16 @@ a:hover {
   right: 200px;
   background-color: white;
 }
-
 .navbar {
   background-color: #eee;
+  width: 100vw;
+}
+.navbar-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 2vh;
+  width: 94%;
 }
 
 .navbar-buttons {
@@ -74,6 +77,9 @@ a:hover {
   display: flex;
   justify-content: center;
 }
+.project-tasks {
+  width: 45%;
+}
 .navbar-user {
   display: flex;
 }
@@ -99,4 +105,20 @@ a:hover {
 .notification-read:hover,
 .notification-unread:hover {
   background-color: rgb(241, 241, 241);
+}
+
+.close {
+  color: #aaa;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }

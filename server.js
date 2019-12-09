@@ -372,10 +372,11 @@ app.post("/mark-as-read",upload.none(),(req,res)=>{
 
 app.post("/add-user", upload.none(), (req, res) => {
   console.log("ADD-USER HIT====");
-  let id = req.body.projectId;
+  let pid = req.body.projectId;
   let username = req.body.username;
+  let projectTitle = req.body.projectTitle
   let userId = "";
-  console.log("username:", username, " - pid:", id);
+  console.log("username:", username, " - pid:", pid);
   //finds the user object based on the given username
   dbo.collection("users").findOne({ username }, (err, user) => {
     if (err) {
@@ -386,10 +387,10 @@ app.post("/add-user", upload.none(), (req, res) => {
       return res.send(JSON.stringify({ success: false }));
     }
     //if the project isn't already listed in the user's projects object
-    if (user.projects[id] === undefined) {
+    if (user.projects[pid] === undefined) {
       userId = user._id;
       let projectObj = user.projects;
-      projectObj[id] = "user";
+      projectObj[pid] = "user";
       console.log("new user projects obj :", projectObj);
       //set the users projects to the new obj containing the added project
       dbo
@@ -398,9 +399,23 @@ app.post("/add-user", upload.none(), (req, res) => {
       //update the users array of the project to include the username of the new user
       dbo
         .collection("projects")
-        .updateOne({ _id: ObjectID(id) }, { $push: { users: username } });
-      res.send(JSON.stringify({ success: true }));
-      return;
+        .updateOne({ _id: ObjectID(pid) }, { $push: { users: username } });
+        //send the new user a notification
+    let notifMessage = `You have invited to colaborate on a new project: ${projectTitle}!`;
+    let notifUrl = "/project/" + pid
+    let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    let date = new Date().toLocaleDateString();
+    let timeStamp = currentTime + " - " + date;
+    let notification = {
+        _id:generateSID(),
+        content:notifMessage,
+        url:notifUrl,
+        timeStamp,
+        read:false
+    }
+    sendNotifications([username],notification);
+     return res.send(JSON.stringify({ success: true }));
+      
     }
     console.log("project already listed...");
     res.send(JSON.stringify({ success: false }));

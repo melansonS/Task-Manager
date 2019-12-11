@@ -98,7 +98,14 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log("Add admin response body:", body);
-      this.setState({ addAdminUsername: "" });
+      let updatedProject = {
+        ...this.state.project,
+        users: this.state.project.users.filter(user => {
+          return user !== this.state.addAdminUsername;
+        }),
+        admin: this.state.project.admin.concat(this.state.addAdminUsername)
+      };
+      this.setState({ addAdminUsername: "", project: updatedProject });
     }
   };
 
@@ -122,7 +129,16 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log("remove user response body:", body);
-      this.setState({ removeUserName: "" });
+      let updatedProject = {
+        ...this.state.project,
+        users: this.state.project.users.filter(user => {
+          return user !== this.state.removeUserName;
+        }),
+        admin: this.state.project.admin.filter(admin => {
+          return admin !== this.state.removeUserName;
+        })
+      };
+      this.setState({ removeUserName: "", project: updatedProject });
     } else {
       window.alert("Invalid user");
       this.setState({ removeUserName: "" });
@@ -152,6 +168,12 @@ class UnconnectedProjectHub extends Component {
     let inProgressTasks = [];
     let onHoldTasks = [];
     let completedTasks = [];
+    let arrayOfTaskArrays = [
+      newTasks,
+      inProgressTasks,
+      onHoldTasks,
+      completedTasks
+    ];
     if (this.state.project.tags !== undefined) {
       tags = this.state.project.tags.map(tag => {
         return <div className="project-tag">{tag}</div>;
@@ -171,7 +193,16 @@ class UnconnectedProjectHub extends Component {
           completedTasks.push(task);
         }
       });
-      //map through each of the tasks array and generate the respective dom elements
+      //sort each task of the tasks arrays by upcomming due dates
+      arrayOfTaskArrays.forEach(taskArr => {
+        taskArr.sort((a, b) => {
+          let dueDateA = new Date(a.dueDate) / 1;
+          let dueDateB = new Date(b.dueDate) / 1;
+          return dueDateA - dueDateB;
+        });
+      });
+
+      //map through each of the tasks arrays and generate the respective dom elements
       newTasks = newTasks.map(task => {
         return (
           <TaskCard task={task} projectId={this.state.project._id}>
@@ -204,43 +235,44 @@ class UnconnectedProjectHub extends Component {
 
     return (
       <div className="project-hub">
-        <div className="project-banner">
-          <div style={{ backgroundColor: this.state.project.color }}>
-            <h1>
-              Title:
-              {this.state.project.title}
-            </h1>
-          </div>
-          <b>Description:</b>
-          {this.state.project.description}
-          <b>Tags:</b>
-          {tags}
-          <b>Role:</b>
-          {this.state.role}
+        <div
+          className="project-banner"
+          style={{ backgroundColor: this.state.project.color }}
+        >
+          <h1>{this.state.project.title}</h1>
+          <b>{this.state.project.description}</b>
         </div>
         <div className="project-hub-body">
           <div className="project-tasks">
             {newTasks.length > 0 && (
               <div className="project-hub-new-tasks">
-                <h2>New Tasks</h2>
+                <h2>
+                  New Tasks<div className="new-icon"></div>
+                </h2>
                 {newTasks}
               </div>
             )}
             {inProgressTasks.length > 0 && (
               <div className="project-hub-in-progress-tasks">
-                <h2>In Progress</h2>
+                <h2>
+                  In Progress<div className="in-progress-icon"></div>
+                </h2>
                 {inProgressTasks}
               </div>
             )}
             {onHoldTasks.length > 0 && (
               <div className="project-hub-on-hold-tasks">
-                <h2>On Hold</h2>
+                <h2>
+                  On Hold<div className="on-hold-icon"></div>
+                </h2>
                 {onHoldTasks}
               </div>
             )}
             {completedTasks.length > 0 && (
               <div className="project-hub-completed-tasks">
-                <h2>Completed</h2>
+                <h2>
+                  Completed<div className="completed-icon"></div>
+                </h2>
                 {completedTasks}
               </div>
             )}
@@ -267,6 +299,7 @@ class UnconnectedProjectHub extends Component {
                       <NewTaskForm
                         projectId={this.state.project._id}
                         updateTasks={this.updateTasks}
+                        closeForm={this.handleCloseNewTaskForm}
                       ></NewTaskForm>
                     </div>
                   </div>

@@ -33,7 +33,6 @@ class UnonnectedApp extends Component {
   notificationCheck = () => {
     setInterval(() => {
       if (this.props.loggedIn) {
-        console.log("checking notifications");
         this.getNotifications();
       }
     }, 5000);

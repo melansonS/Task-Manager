@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
+import "./styling/ProjectCard.css";
+
 class UnconnectedProjectCard extends Component {
   constructor(props) {
     super(props);
@@ -14,11 +16,9 @@ class UnconnectedProjectCard extends Component {
     });
     return (
       <div>
-        <div>
-          <b>Title:</b>
-          {this.props.project.title}
-          <div>
-            <b>color:</b>
+        <span>
+          <h3>
+            {this.props.project.title}{" "}
             <div
               //STYLING DONE HERE FOR THE TIME BEING<TESTING PURPOSES ONLY>
               style={{
@@ -28,8 +28,8 @@ class UnconnectedProjectCard extends Component {
                 borderRadius: "50%"
               }}
             ></div>
-          </div>
-        </div>
+          </h3>
+        </span>
         <div>
           <b>Tags:</b>
           {tags}

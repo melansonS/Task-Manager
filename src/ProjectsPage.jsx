@@ -14,8 +14,7 @@ class UnconnectedProjectsPage extends Component {
       showStartProjectForm: false,
       newProjectTitle: "",
       newProjectDescription: "",
-      newProjectTags: "",
-      newProjectColor: "#87c8d4"
+      newProjectTags: ""
     };
   }
   componentDidMount() {
@@ -70,9 +69,6 @@ class UnconnectedProjectsPage extends Component {
   handleTagsChange = event => {
     this.setState({ newProjectTags: event.target.value });
   };
-  handleColorChange = event => {
-    this.setState({ newProjectColor: event.target.value });
-  };
 
   handleStartProjectSubmit = async event => {
     event.preventDefault();
@@ -81,7 +77,6 @@ class UnconnectedProjectsPage extends Component {
     data.append("title", this.state.newProjectTitle);
     data.append("description", this.state.newProjectDescription);
     data.append("tags", this.state.newProjectTags);
-    data.append("color", this.state.newProjectColor);
     let response = await fetch("/new-project", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
@@ -97,6 +92,7 @@ class UnconnectedProjectsPage extends Component {
         newProjectTags: ""
       });
       this.props.dispatch({ type: "start-project", newUserData: body.user });
+      this.handleHideProjectForm();
     }
   };
 
@@ -132,12 +128,12 @@ class UnconnectedProjectsPage extends Component {
               <h3>New Project</h3>
               <form onSubmit={this.handleStartProjectSubmit}>
                 <div>
-                  {/* <h4>Title:</h4> */}
                   <input
                     type="text"
                     onChange={this.handleTitleChange}
                     value={this.state.newProjectTitle}
                     placeholder="Title"
+                    id="start-project-title"
                     required
                   ></input>
                 </div>

@@ -239,11 +239,11 @@ class UnconnedtedTaskPage extends Component {
         </div>
         <div className="task-menu">
           <div>
-            <b>Creation date:</b>
+            <b>Creation date: </b>
             {this.state.task.creationDate}
           </div>
-          <div>
-            <b>Due date:</b>
+          <div className="due-date">
+            <b>Due date: </b>
             <DatePicker
               popperPlacement="bottom"
               popperModifiers={{
@@ -257,14 +257,13 @@ class UnconnedtedTaskPage extends Component {
                   enabled: false // turn off since needs preventOverflow to be enabled
                 }
               }}
-              d
               selected={this.state.today}
               onChange={this.handleDateChange}
               value={this.state.newDueDate}
             ></DatePicker>
           </div>
           <div>
-            <b>Assigned to :</b>
+            <b>Assigned to: </b>
             {this.state.assignee}
             {this.state.admin && (
               <form onSubmit={this.handleAssignTo}>
@@ -295,7 +294,9 @@ class UnconnedtedTaskPage extends Component {
             </select>
           </div>
           {this.state.admin && (
-            <button onClick={this.handleDeleteTask}>Delete task</button>
+            <div>
+              <button onClick={this.handleDeleteTask}>Delete task</button>
+            </div>
           )}
           <div>
             <Link to={"/project/" + this.props.projectId}>Project Hub</Link>

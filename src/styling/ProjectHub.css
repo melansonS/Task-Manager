@@ -1,10 +1,16 @@
+.project-banner {
+  text-align: center;
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
 .project-hub-menu input[type="text"] {
   justify-content: center;
   outline: none;
   border-style: none;
   border-bottom: 1px solid black;
   margin-block-end: 1.33em;
-  width: 25vw;
+  width: 15vw;
 }
 
 .new-task-modal {
@@ -21,10 +27,34 @@
 }
 
 .new-task-modal-content {
+  border-radius: 3px;
   background-color: #fefefe;
   margin: 3% auto; /* 15% from the top and centered */
-  padding: 20px;
+  padding: 3em;
   border: 1px solid #888;
   width: 60%; /* Could be more or less, depending on screen size */
   position: relative;
+}
+
+.project-hub-body {
+  display: flex;
+  justify-content: center;
+}
+.project-tasks {
+  width: 50%;
+  padding: 0 2vw;
+}
+
+.project-tasks h2 {
+  display: flex;
+  align-items: center;
+}
+.project-hub-new-tasks,
+.project-hub-in-progress-tasks,
+.project-hub-on-hold-tasks,
+.project-hub-completed-tasks {
+  border: 1px rgb(117, 117, 117) solid;
+  border-radius: 3px;
+  padding: 0em 1em 1em 1em;
+  margin-bottom: 1em;
 }

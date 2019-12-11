@@ -26,3 +26,9 @@
   align-items: center;
   justify-content: center;
 }
+.new-task-file-names {
+  font-size: 12px;
+  font-style: italic;
+  color: rgb(117, 117, 117);
+  vertical-align: super;
+}

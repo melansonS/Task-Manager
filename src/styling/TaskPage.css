@@ -1,14 +1,16 @@
 .task-page {
+  width: 100%;
   display: flex;
   justify-content: center;
 }
 .task-body {
   position: relative;
   margin-right: 3vw;
-  /* width: 43vw; */
+  max-width: 48vw;
 }
 .task-body textarea {
   border: none;
+  max-width: 100%;
   resize: vertical;
 }
 
@@ -18,7 +20,35 @@
 .task-posts img {
   height: 90px;
 }
+.task-menu {
+  padding-top: 3em;
+}
 
 .task-menu div {
   margin-bottom: 15px;
+}
+
+.task-menu input[type="text"] {
+  border: none;
+  border-bottom: 1px solid black;
+}
+.task-menu input[type="text"]:focus {
+  outline: none;
+}
+
+.task-menu select {
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.task-menu select:focus {
+  outline: none;
+}
+
+.react-datepicker-wrapper {
+  margin: 0;
+}
+.due-date {
+  box-sizing: border-box;
+  height: 1.2em;
 }

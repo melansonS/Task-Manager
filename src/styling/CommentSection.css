@@ -1,6 +1,6 @@
 .comment {
   margin-bottom: 1vh;
-  border-bottom: 1px black solid;
+  border-bottom: 1px rgb(117, 117, 117) solid;
   border-bottom-right-radius: 10px;
 }
 .no-comments {

@@ -187,7 +187,6 @@ app.post("/new-project", upload.none(), (req, res) => {
   let title = req.body.title;
   let description = req.body.description;
   let tags = req.body.tags.split(" ");
-  let color = req.body.color;
   let creationDate = new Date().toDateString();
   dbo.collection("projects").insertOne(
     {
@@ -196,7 +195,6 @@ app.post("/new-project", upload.none(), (req, res) => {
       title,
       description,
       tags,
-      color,
       creationDate,
       tasks: []
     },
@@ -648,7 +646,7 @@ app.post("/reassign-task", upload.none(), (req, res) => {
             return res.send(JSON.stringify({ success: false }));
           }
           if(assignee !== username){
-            let notifMessage = `You have been assigned a new task: ${taskName}`;
+            let notifMessage = `You have been assigned a new task:  ${taskName}`;
             let notifUrl = "/project/" + pid + "-" + taskName
             let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             let date = new Date().toLocaleDateString();
@@ -779,7 +777,7 @@ app.post("/add-comment", upload.none(), (req, res) => {
             return res.send(JSON.stringify({ success: false }));
           }
           //set up the notification object
-          let notifMessage = `${user} has left a comment on a task you are watching: ${taskName}`;
+          let notifMessage = `${user} has left a comment on a task you are watching:  ${taskName}`;
           let notifUrl = "/project/" + pid + "-" + taskName
           watchers = watchers.filter( watcher =>{
               return watcher !== user;
@@ -862,7 +860,7 @@ app.post("/update-task-status", upload.none(), (req, res) => {
       .collection("projects")
       .updateOne({ _id: ObjectID(pid) }, { $set: { tasks: updatedTasks } });
       //set up the notification message
-      let notifMessage = `${user} has set the status of a task you are watching to ${newStatus}: ${taskName}`;
+      let notifMessage = `${user} has set the status of a task you are watching to ${newStatus}:  ${taskName}`;
       let notifUrl = "/project/" + pid + "-" + taskName
       //filter out the user, so that they don't get notified of updates they've made...
       watchers = watchers.filter( watcher =>{

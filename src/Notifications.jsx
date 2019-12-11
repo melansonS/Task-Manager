@@ -76,14 +76,14 @@ class UnconnectedNotifications extends Component {
         >
           <div className={notifClass}>
             <p>{notification.content}</p>
-            <i>{notification.timeStamp}</i>
+            <i className="notification-timestamp">{notification.timeStamp}</i>
             {/* <p>Read:{notification.read + ""}</p> */}
           </div>
         </Link>
       );
     });
     return (
-      <div>
+      <div className="notifications-body">
         <h3>Notifications</h3>
         {notificationElems.reverse()}
       </div>

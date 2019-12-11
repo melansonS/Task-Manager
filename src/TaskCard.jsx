@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+
+import "./styling/TaskCard.css";
+
 class UnconnectedTaskCard extends Component {
   constructor(props) {
     super(props);
@@ -8,28 +11,38 @@ class UnconnectedTaskCard extends Component {
   }
 
   render() {
-    return (
+    let assignee = (
       <div>
-        <Link
-          to={"/project/" + this.props.projectId + "-" + this.props.task.title}
-        >
-          <div>
-            <h3>{this.props.task.title}</h3>
-            <div>
-              <b>Assigned to: </b>
-              {this.props.task.assignee}
-            </div>
-            <div>
-              <b>Status: </b>
-              {this.props.task.status}
-            </div>
-            <div>
-              <b>Due: </b>
-              {this.props.task.dueDate}
-            </div>
-          </div>
-        </Link>
+        <i>Unassigned</i>
       </div>
+    );
+    if (this.props.task.assignee !== "") {
+      assignee = (
+        <div>
+          <b>Assigned to: </b>
+          {this.props.task.assignee}
+        </div>
+      );
+    }
+    return (
+      <Link
+        to={"/project/" + this.props.projectId + "-" + this.props.task.title}
+      >
+        <div className="task-card">
+          <h3 className="task-card-title">{this.props.task.title}</h3>
+          {assignee}
+          <div>
+            <b>Status: </b>
+            {this.props.task.status}
+          </div>
+          <div>
+            <b>Due: </b>
+            <span className="task-card-due-date">
+              {this.props.task.dueDate}
+            </span>
+          </div>
+        </div>
+      </Link>
     );
   }
 }

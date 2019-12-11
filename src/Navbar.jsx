@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
+import "./styling/Navbar.css";
 
 import UserIcon from "./UserIcon.jsx";
 import { IoIosSearch } from "react-icons/io";
@@ -12,6 +13,7 @@ class UnconnectNavbar extends Component {
       searchQuery: ""
     };
   }
+
   handleSearchSubmit = event => {
     event.preventDefault();
     this.props.dispatch({ type: "search", query: this.state.searchQuery });
@@ -35,14 +37,13 @@ class UnconnectNavbar extends Component {
               <div>Todo</div>
             </Link>
           </div>
-          <Link to="/">
-            <img
-              src="\img\placeholder.com-logo3.png"
-              style={{ height: "40px" }}
-            />
-          </Link>
+          <img
+            src="/img/placeholder.com-logo3.png"
+            style={{ height: "40px" }}
+          />
           <div></div>
-
+        </div>
+        <div className="navbar-search">
           <form onSubmit={this.handleSearchSubmit}>
             <input
               type="text"

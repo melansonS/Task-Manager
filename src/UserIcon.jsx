@@ -19,10 +19,18 @@ class UnconnectedUserIcon extends Component {
   }
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
-    // document.addEventListener("click", this.handleKeyDown);
+    document.addEventListener("click", this.handleModalClick);
   }
+
+  handleModalClick = event => {
+    let modal = [];
+    modal.push(document.getElementsByClassName("icon-menu-modal")[0]);
+    modal.push(document.getElementsByClassName("user-settings-modal")[0]);
+    if (modal.includes(event.target)) {
+      this.handleMenuClose();
+    }
+  };
   handleKeyDown = event => {
-    console.log("event listener event:", event.target);
     if (event.key === "Escape") {
       console.log("esacpe hit");
       this.handleMenuClose();
@@ -110,50 +118,71 @@ class UnconnectedUserIcon extends Component {
           )}
         </div>
         {this.state.showMenu && (
-          <div className="icon-menu">
-            <div className="icon-menu-header">
-              <h4>User Icon Menu</h4>
-              <button onClick={this.handleMenuClose}>x</button>
-            </div>
-
-            <button onClick={this.handleShowUserSettings}>User Settings</button>
-            <button onClick={this.handleLogout}>Log out</button>
-            <div className="menu-notifications">
-              <Link to="/notifications" onClick={this.handleMenuClose}>
-                Notifications
-              </Link>
-
-              <Notifications closeMenu={this.handleMenuClose}></Notifications>
-            </div>
-            {this.state.showUserSettings && (
-              <div>
-                Update Email:
-                <form onSubmit={this.handleEmailSubmit}>
-                  <input
-                    type="email"
-                    onChange={this.handleEmailChange}
-                    required
-                  ></input>
-                  <input type="submit"></input>
-                </form>
-                Update Password:
-                <form onSubmit={this.handlePasswordSubmit}>
-                  <input
-                    type="password"
-                    onChange={this.handlePasswordChange}
-                    required
-                    placeholder="New Password"
-                  ></input>
-                  <input
-                    type="password"
-                    onChange={this.handlePasswordConfirmationChange}
-                    required
-                    placeholder="Confrim Password"
-                  ></input>
-                  <input type="submit"></input>
-                </form>
+          <div class="icon-menu-modal">
+            <div className="icon-menu">
+              <div className="icon-menu-header">
+                <h4>Menu</h4>
+                <span onClick={this.handleMenuClose} className="close">
+                  X
+                </span>
               </div>
-            )}
+              <div>
+                <button onClick={this.handleShowUserSettings}>
+                  User Settings
+                </button>
+              </div>
+              <div>
+              <button onClick={this.handleLogout}>Log out</button>
+              </div>
+              <div className="menu-notifications">
+                <Link to="/notifications" onClick={this.handleMenuClose}>
+                  Notifications
+                </Link>
+
+                <Notifications closeMenu={this.handleMenuClose}></Notifications>
+              </div>
+              {this.state.showUserSettings && (
+                <div className="user-settings-modal">
+                  <div className="user-settings-modal-content">
+                    <h4>Update Email:</h4>
+                    <form onSubmit={this.handleEmailSubmit}>
+                      <div>
+                        <input
+                          type="email"
+                          onChange={this.handleEmailChange}
+                          placeholder="New Email"
+                          required
+                        ></input>
+                      </div>
+                      <input type="submit"></input>
+                    </form>
+                    <h4>Update Password:</h4>
+                    <form onSubmit={this.handlePasswordSubmit}>
+                      <div>
+                        <input
+                          type="password"
+                          onChange={this.handlePasswordChange}
+                          required
+                          placeholder="New Password"
+                        ></input>
+                      </div>
+                      <div>
+                        <input
+                          type="password"
+                          onChange={this.handlePasswordConfirmationChange}
+                          required
+                          placeholder="Confrim Password"
+                        ></input>
+                      </div>
+                      <input type="submit"></input>
+                    </form>
+                    <span onClick={this.handleMenuClose} className="close">
+                      X
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

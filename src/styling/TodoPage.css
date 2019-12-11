@@ -1,0 +1,14 @@
+.todo-body {
+  width: 60%;
+  margin: auto;
+}
+.todo-body h2 {
+  align-self: center;
+}
+
+.todo-collection {
+  border: 1px rgb(117, 117, 117) solid;
+  border-radius: 3px;
+  padding: 0em 1em 1em 1em;
+  margin: 1em 0em;
+}

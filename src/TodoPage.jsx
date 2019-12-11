@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import TaskCard from "./TaskCard.jsx";
 
+import "./styling/TodoPage.css";
+
 class UnconnectedTodoPage extends Component {
   constructor(props) {
     super(props);
@@ -29,9 +31,17 @@ class UnconnectedTodoPage extends Component {
   };
   render() {
     if (this.state.todos.length === 0) {
-      return <div>no tasks currently assined to you</div>;
+      return (
+        <div className="no-tasks">
+          There are no tasks currently assined to you
+        </div>
+      );
     }
     let taskCardElems = [];
+    let dueToday = [];
+    let dueThisWeek = [];
+    let pastDue = [];
+    let other = [];
     this.state.todos.forEach(task => {
       taskCardElems.push(
         <TaskCard task={task} projectId={task.pid}></TaskCard>
@@ -43,7 +53,50 @@ class UnconnectedTodoPage extends Component {
       let dueDateB = new Date(b.props.task.dueDate) / 1;
       return dueDateA - dueDateB;
     });
-    return <div>All of your Todos!{taskCardElems}</div>;
+    taskCardElems.forEach(task => {
+      let todayAtMidnight = new Date().setUTCHours(0, 0, 0, 0);
+      let dueDate = new Date(task.props.task.dueDate).setUTCHours(0, 0, 0, 0);
+      let oneDay = 1000 * 60 * 60 * 24;
+      if (dueDate < todayAtMidnight) {
+        pastDue.push(task);
+      } else if (dueDate === todayAtMidnight) {
+        dueToday.push(task);
+      } else if (dueDate < todayAtMidnight + oneDay * 7) {
+        dueThisWeek.push(task);
+      } else {
+        other.push(task);
+      }
+    });
+
+    return (
+      <div className="todo-body">
+        {pastDue.length > 0 && (
+          <div className="todo-collection">
+            <h2>Past Due</h2>
+            {pastDue}
+          </div>
+        )}
+        {dueToday.length > 0 && (
+          <div className="todo-collection">
+            <h2>Due Today</h2>
+            {dueToday}
+          </div>
+        )}
+        {dueThisWeek.length > 0 && (
+          <div className="todo-collection">
+            <h2>Due This Week</h2>
+            {dueThisWeek}
+          </div>
+        )}
+        {other.length > 0 && (
+          <div className="todo-collection">
+            <h2>Other..</h2>
+            {other}
+          </div>
+        )}
+        {/* {taskCardElems} */}
+      </div>
+    );
   }
 }
 

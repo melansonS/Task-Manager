@@ -54,24 +54,30 @@ class UnconnectedSignup extends Component {
       <div>
         <h3>Signup</h3>
         <form onSubmit={this.handleSubmit}>
-          Username:
-          <input
-            type="text"
-            onChange={this.handleUsernameChange}
-            required
-          ></input>
-          Password:
-          <input
-            type="password"
-            onChange={this.handlePasswordChange}
-            required
-          ></input>
-          Email:
-          <input
-            type="email"
-            onChange={this.handleEmailChange}
-            required
-          ></input>
+          <div>
+            <input
+              type="text"
+              onChange={this.handleUsernameChange}
+              placeholder="Username"
+              required
+            ></input>
+          </div>
+          <div>
+            <input
+              type="password"
+              onChange={this.handlePasswordChange}
+              placeholder="Password"
+              required
+            ></input>
+          </div>
+          <div>
+            <input
+              type="email"
+              onChange={this.handleEmailChange}
+              placeholder="Email"
+              required
+            ></input>
+          </div>
           <input type="submit"></input>
         </form>
       </div>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Signup from "./Signup.jsx";
-
+import "./styling/Login.css";
 class UnconnectedLogin extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +11,16 @@ class UnconnectedLogin extends Component {
       signup: false
     };
   }
+  componentDidMount = () => {
+    document.addEventListener("click", this.handleModalClick);
+  };
+  handleModalClick = event => {
+    let modal = document.getElementsByClassName("signup-modal")[0];
+    if (event.target === modal) {
+      this.closeSignup();
+    }
+  };
+
   handleUsernameChange = event => {
     this.setState({ username: event.target.value });
   };
@@ -65,30 +75,45 @@ class UnconnectedLogin extends Component {
   };
   render() {
     return (
-      <div>
-        <h3>Login</h3>
-        <form onSubmit={this.handleSubmit}>
-          Username:
-          <input
-            type="text"
-            onChange={this.handleUsernameChange}
-            required
-          ></input>
-          Password:
-          <input
-            type="password"
-            onChange={this.handlePasswordChange}
-            required
-          ></input>
-          <input type="submit"></input>
-        </form>
-        <button onClick={this.openSignup}>Signup</button>
-        {this.state.signup && (
-          <div>
-            <button onClick={this.closeSignup}>x</button>
-            <Signup></Signup>
+      <div className="login-background">
+        <div className="login-body">
+          <div className="login-logo">
+            <img src="/img/placeholder.com-logo3.png"></img>
           </div>
-        )}
+          <div className="login-form">
+            <h3>Login</h3>
+            <form onSubmit={this.handleSubmit}>
+              <div>
+                <input
+                  type="text"
+                  onChange={this.handleUsernameChange}
+                  required
+                  placeholder="Username"
+                ></input>
+              </div>
+              <div>
+                <input
+                  type="password"
+                  onChange={this.handlePasswordChange}
+                  placeholder="Password"
+                  required
+                ></input>
+              </div>
+              <input type="submit"></input>
+            </form>
+            <button onClick={this.openSignup}>Signup</button>
+            {this.state.signup && (
+              <div className="signup-modal">
+                <div className="signup-modal-content">
+                  <span className="close" onClick={this.closeSignup}>
+                    X
+                  </span>
+                  <Signup></Signup>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     );
   }

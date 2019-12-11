@@ -48,9 +48,17 @@ class UnconnectedNewTaskForm extends Component {
     this.setState({ title: "", description: "", tags: "", files: [] });
     console.log("new task response body->", body);
     this.props.updateTasks(body.newTasksArr);
+    this.props.closeForm();
   };
 
   render() {
+    let fileName = "";
+    if (this.state.files[0] !== undefined) {
+      console.log("thiis . state . files:", this.state.files[0].name);
+      Object.values(this.state.files).forEach(file => {
+        fileName += " " + file.name;
+      });
+    }
     return (
       <div className="new-task-form">
         <h3>New Task form!</h3>
@@ -91,11 +99,12 @@ class UnconnectedNewTaskForm extends Component {
               type="file"
               onChange={this.handleFileChange}
               multiple
-              value={this.state.files}
+              // value={this.state.files}
               style={{ display: "none" }}
             ></input>
-            <label for="image-files">
+            <label htmlFor="image-files">
               <AiOutlineFolderAdd></AiOutlineFolderAdd>
+              <span className="new-task-file-names">{fileName}</span>
             </label>
           </div>
 

@@ -57,6 +57,8 @@ class UnconnectedTodoPage extends Component {
       let todayAtMidnight = new Date().setUTCHours(0, 0, 0, 0);
       let dueDate = new Date(task.props.task.dueDate).setUTCHours(0, 0, 0, 0);
       let oneDay = 1000 * 60 * 60 * 24;
+      // The time is set to midnight 'Coordinated Universal Time' (UTC) which means that
+      //since Eastern Standard Time is 5 hours behind, the "day cycle" changes over at 19:00 local time...
       if (dueDate < todayAtMidnight) {
         pastDue.push(task);
       } else if (dueDate === todayAtMidnight) {

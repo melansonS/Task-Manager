@@ -1,7 +1,7 @@
 .task-card:hover {
-  background-color: rgb(245, 245, 245);
+  background-color: rgb(240, 240, 240);
   border-radius: 3px;
-  color: rgb(50, 50, 50);
+  color: rgb(40, 40, 40);
 }
 .task-card-due-date {
   color: rgb(117, 117, 117);
@@ -11,6 +11,10 @@
 .task-card-title {
   margin-block-end: 0;
   position: relative;
+}
+.task-card-status {
+  display: flex;
+  align-items: center;
 }
 .task-card-title:after {
   position: absolute;

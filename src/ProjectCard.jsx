@@ -16,20 +16,7 @@ class UnconnectedProjectCard extends Component {
     });
     return (
       <div>
-        <span>
-          <h3>
-            {this.props.project.title}{" "}
-            <div
-              //STYLING DONE HERE FOR THE TIME BEING<TESTING PURPOSES ONLY>
-              style={{
-                backgroundColor: this.props.project.color,
-                height: "17px",
-                width: "17px",
-                borderRadius: "50%"
-              }}
-            ></div>
-          </h3>
-        </span>
+        <h3>{this.props.project.title}</h3>
         <div>
           <b>Tags:</b>
           {tags}

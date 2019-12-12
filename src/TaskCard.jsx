@@ -31,9 +31,15 @@ class UnconnectedTaskCard extends Component {
         <div className="task-card">
           <h3 className="task-card-title">{this.props.task.title}</h3>
           {assignee}
-          <div>
+          <div className="task-card-status">
             <b>Status: </b>
             {this.props.task.status}
+            <div
+              className={this.props.task.status
+                .toLowerCase()
+                .replace(" ", "-")
+                .concat("-icon")}
+            ></div>
           </div>
           <div>
             <b>Due: </b>

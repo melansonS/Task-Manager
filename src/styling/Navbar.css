@@ -37,7 +37,7 @@
 }
 
 .icon-menu {
-  background-color: rgb(248, 248, 248);
+  background-color: rgb(247, 247, 247);
   border: 1px grey solid;
   border-radius: 3px;
   position: absolute;
@@ -67,10 +67,12 @@
   border-radius: 50%;
   background-color: rgb(187, 40, 40);
   color: white;
+  display: flex;
   font-weight: bold;
+  justify-content: center;
   text-align: center;
-  height: 3vh;
-  width: 3vh;
+  height: 1.3em;
+  width: 1.3em;
 }
 
 .notification-unread {

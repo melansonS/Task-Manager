@@ -292,6 +292,12 @@ class UnconnedtedTaskPage extends Component {
               <option value="On Hold">On Hold</option>
               <option value="Completed">Completed</option>
             </select>
+            <div
+              className={this.state.status
+                .toLowerCase()
+                .replace(" ", "-")
+                .concat("-icon")}
+            ></div>
           </div>
           {this.state.admin && (
             <div>

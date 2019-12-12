@@ -42,23 +42,25 @@ class UnconnectNavbar extends Component {
             style={{ height: "40px" }}
           />
           <div></div>
-        </div>
-        <div className="navbar-search">
-          <form onSubmit={this.handleSearchSubmit}>
-            <input
-              type="text"
-              placeholder="search..."
-              value={this.state.searchQuery}
-              onChange={this.handleSearchChange}
-            ></input>
 
-            {/* ////////////////////////////////////////SEARCH ICON -> USING A LABEL WITH AN ICON TO DISPLAY */}
-            {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
-            <button id="search" style={{ display: "none" }}></button>
-            <label for="search">
-              <IoIosSearch style={{ margin: "0px 10px", fontSize: "20px" }} />
-            </label>
-          </form>
+          {/* <div className="navbar-search"> */}
+          <div>
+            <form onSubmit={this.handleSearchSubmit}>
+              <input
+                type="text"
+                placeholder="search..."
+                value={this.state.searchQuery}
+                onChange={this.handleSearchChange}
+              ></input>
+
+              {/* ////////////////////////////////////////SEARCH ICON -> USING A LABEL WITH AN ICON TO DISPLAY */}
+              {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
+              <button id="search" style={{ display: "none" }}></button>
+              <label htmlFor="search">
+                <IoIosSearch style={{ margin: "0px 10px", fontSize: "20px" }} />
+              </label>
+            </form>
+          </div>
         </div>
       </div>
     );

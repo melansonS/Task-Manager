@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 2vh;
-  width: 64vw;
+  width: 97vw;
 }
 
 .navbar-buttons {
@@ -53,6 +53,9 @@
 .icon-menu::-webkit-scrollbar {
   display: none;
 }
+.icon-menu button {
+  background-color: rgb(247, 247, 247);
+}
 .icon-menu-header {
   display: flex;
 }
@@ -69,6 +72,7 @@
   color: white;
   display: flex;
   font-weight: bold;
+  font-size: 10px;
   justify-content: center;
   text-align: center;
   height: 1.3em;
@@ -78,10 +82,12 @@
 .notification-unread {
   border-radius: 3px;
   font-weight: bold;
+  transition: all 0.3s ease;
 }
 .notification-read {
   font-weight: lighter;
   border-radius: 3px;
+  transition: all 0.3s ease;
 }
 .notification-read:hover,
 .notification-unread:hover {

@@ -1,11 +1,12 @@
 .projects-page-body {
-  width: 100%;
+  max-width: 100%;
   position: relative;
+  padding: 1em;
 }
 
 .add-project-label {
   position: relative;
-  border: #aaa 2px solid;
+  border: #13293d 2px solid;
   border-radius: 1em;
   justify-content: center;
   align-items: center;
@@ -13,9 +14,13 @@
   margin: 1em auto;
   width: 55%;
   cursor: pointer;
-  color: rgb(126, 126, 126);
+  color: #13293d;
   font-weight: bold;
   display: flex;
+  transition: all 0.3s ease;
+}
+.add-project-label:hover {
+  background-color: rgb(246, 246, 246);
 }
 
 .add-project-label svg {
@@ -66,4 +71,11 @@
   outline: none;
   width: 88%;
   margin-block-end: 1.33em;
+}
+
+.admin-projects-cards,
+.user-projects-cards {
+  width: 70%;
+  padding: 1em;
+  margin: 0 auto;
 }

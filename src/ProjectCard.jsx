@@ -15,14 +15,21 @@ class UnconnectedProjectCard extends Component {
       return <div className="project-tag">{tag}</div>;
     });
     return (
-      <div>
-        <h3>{this.props.project.title}</h3>
-        <div>
-          <b>Tags:</b>
-          {tags}
+      <Link to={"/project/" + this.props.project._id}>
+        <div className="project-card">
+          <h2>{this.props.project.title}</h2>
+          <div className="project-card-details">
+            <div>
+              <b>Creation date: </b>
+              <i>{this.props.project.creationDate}</i>
+            </div>
+            <div>
+              <b>Total tasks: </b>
+              {this.props.project.tasks.length}
+            </div>
+          </div>
         </div>
-        <Link to={"/project/" + this.props.project._id}>More details</Link>
-      </div>
+      </Link>
     );
   }
 }

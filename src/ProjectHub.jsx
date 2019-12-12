@@ -68,11 +68,16 @@ class UnconnectedProjectHub extends Component {
       let body = await response.text();
       body = JSON.parse(body);
       console.log(body);
-      let updatedProject = {
-        ...this.state.project,
-        users: this.state.project.users.concat(this.state.addUserUsername)
-      };
-      this.setState({ addUserUsername: "", project: updatedProject });
+      if (body.success) {
+        let updatedProject = {
+          ...this.state.project,
+          users: this.state.project.users.concat(this.state.addUserUsername)
+        };
+        this.setState({ addUserUsername: "", project: updatedProject });
+      } else {
+        window.alert("Invalid User");
+        this.setState({ addUserUsername: "" });
+      }
     }
   };
 
@@ -235,9 +240,7 @@ class UnconnectedProjectHub extends Component {
 
     return (
       <div className="project-hub">
-        <div
-          className="project-banner"
-        >
+        <div className="project-banner">
           <h1>{this.state.project.title}</h1>
           <b>{this.state.project.description}</b>
         </div>
@@ -245,33 +248,25 @@ class UnconnectedProjectHub extends Component {
           <div className="project-tasks">
             {newTasks.length > 0 && (
               <div className="project-hub-new-tasks">
-                <h2>
-                  New Tasks
-                </h2>
+                <h2>New Tasks</h2>
                 {newTasks}
               </div>
             )}
             {inProgressTasks.length > 0 && (
               <div className="project-hub-in-progress-tasks">
-                <h2>
-                  In Progress
-                </h2>
+                <h2>In Progress</h2>
                 {inProgressTasks}
               </div>
             )}
             {onHoldTasks.length > 0 && (
               <div className="project-hub-on-hold-tasks">
-                <h2>
-                  On Hold
-                </h2>
+                <h2>On Hold</h2>
                 {onHoldTasks}
               </div>
             )}
             {completedTasks.length > 0 && (
               <div className="project-hub-completed-tasks">
-                <h2>
-                  Completed
-                </h2>
+                <h2>Completed</h2>
                 {completedTasks}
               </div>
             )}
@@ -307,6 +302,7 @@ class UnconnectedProjectHub extends Component {
                   <h3>Add a user!</h3>
                   <form onSubmit={this.handleAddUserSubmit}>
                     <input
+                      required
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleAddUserUsername}
@@ -319,6 +315,7 @@ class UnconnectedProjectHub extends Component {
                   <h3>Make a User an Admin!</h3>
                   <form onSubmit={this.handleAddAdminSubmit}>
                     <input
+                      required
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleAddAdminName}
@@ -331,6 +328,7 @@ class UnconnectedProjectHub extends Component {
                   <h3>Remove a user!</h3>
                   <form onSubmit={this.handleRemoveUserSubmit}>
                     <input
+                      required
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleRemoveUserName}

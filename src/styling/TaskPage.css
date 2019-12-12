@@ -6,7 +6,7 @@
 .task-body {
   position: relative;
   margin-right: 3vw;
-  max-width: 48vw;
+  width: 46vw;
 }
 .task-body textarea {
   border: none;
@@ -35,7 +35,13 @@
 .task-menu input[type="text"]:focus {
   outline: none;
 }
-
+.task-menu-status {
+  display: flex;
+  align-items: baseline;
+}
+.task-menu-status div {
+  margin-bottom: 0;
+}
 .task-menu select {
   border: none;
   border-bottom: 1px solid black;
@@ -44,9 +50,16 @@
 .task-menu select:focus {
   outline: none;
 }
+.task-menu-project-hub:hover {
+  color: #13293d;
+  text-decoration: underline;
+}
 
 .react-datepicker-wrapper {
   margin: 0;
+}
+.react-datepicker__month-container div {
+  margin-bottom: 0;
 }
 .due-date {
   box-sizing: border-box;

@@ -105,18 +105,20 @@ class UnconnectedProjectsPage extends Component {
     });
     return (
       <div className="projects-page-body">
-        <div>
-          <h1>Admin Projects</h1>
-          {adminProjectCardElems}
-        </div>
-        <div>
-          <h3>User projects</h3>
-          {userProjectCardElems}
-        </div>
-        {/* ////////////////////////////////////////ADD PROJECT BUTTON -> USING A LABEL WITH AND ICON TO DISPLAY */}
-        {/* /////////////////////////////////////// STYLING HERE NEEDS TO BE MOVED TO CSS FILE */}
+        {adminProjectCardElems.length > 0 && (
+          <div className="admin-projects">
+            <h1>Admin Projects</h1>
+            <div className="admin-projects-cards">{adminProjectCardElems}</div>
+          </div>
+        )}
+        {userProjectCardElems.length > 0 && (
+          <div className="user-projects">
+            <h3>User projects</h3>
+            <div className="user-projects-cards">{userProjectCardElems}</div>
+          </div>
+        )}
 
-        <div for="add-project">
+        <div htmlFor="add-project">
           <div className="add-project-label" onClick={this.handleStartProject}>
             <p>Start a new project!</p>
             <AiOutlinePlusCircle />
@@ -133,12 +135,12 @@ class UnconnectedProjectsPage extends Component {
                     onChange={this.handleTitleChange}
                     value={this.state.newProjectTitle}
                     placeholder="Title"
-                    id="start-project-title"
+                    className="start-project-title"
                     required
                   ></input>
                 </div>
                 <div>
-                  <h4> Description:</h4>
+                  <h4> Sub-Title:</h4>
                   <textarea
                     rows="10"
                     type="text"
@@ -149,7 +151,6 @@ class UnconnectedProjectsPage extends Component {
                   ></textarea>
                 </div>
                 <div>
-                  {/* <h4>Tags:</h4> */}
                   <input
                     type="text"
                     onChange={this.handleTagsChange}
@@ -162,7 +163,7 @@ class UnconnectedProjectsPage extends Component {
               </form>
 
               <div
-                for="modal-close"
+                htmlFor="modal-close"
                 className="close"
                 onClick={this.handleHideProjectForm}
               >

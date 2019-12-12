@@ -132,13 +132,14 @@ class UnconnectedUserIcon extends Component {
                 </button>
               </div>
               <div>
-              <button onClick={this.handleLogout}>Log out</button>
+                <Link to="/notifications" onClick={this.handleMenuClose}>
+                  <b>All Notifications</b>
+                </Link>
+              </div>
+              <div>
+                <button onClick={this.handleLogout}>Log out</button>
               </div>
               <div className="menu-notifications">
-                <Link to="/notifications" onClick={this.handleMenuClose}>
-                  Notifications
-                </Link>
-
                 <Notifications closeMenu={this.handleMenuClose}></Notifications>
               </div>
               {this.state.showUserSettings && (

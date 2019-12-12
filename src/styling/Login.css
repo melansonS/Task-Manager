@@ -75,3 +75,6 @@
 .login-form {
   width: 65%;
 }
+.login-form input[type="submit"] {
+  margin-left: -6px;
+}

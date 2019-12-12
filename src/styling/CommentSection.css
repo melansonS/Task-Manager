@@ -24,3 +24,6 @@
 .comment-box-text:focus {
   outline: none;
 }
+.comment-content {
+  font-size: 14px;
+}

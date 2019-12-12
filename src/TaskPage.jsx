@@ -211,7 +211,7 @@ class UnconnedtedTaskPage extends Component {
           <h4>Description:</h4>
           <textarea
             rows="10"
-            cols="80"
+            cols="85"
             readOnly={!this.state.admin}
             onChange={this.handleDescriptionChange}
             value={this.state.newDescription}
@@ -267,24 +267,18 @@ class UnconnedtedTaskPage extends Component {
             {this.state.assignee}
             {this.state.admin && (
               <form onSubmit={this.handleAssignTo}>
-                assign to:
+                Reassign to:
                 <input
                   type="text"
                   onChange={this.handleAssigneeChange}
                   value={this.state.newAssignee}
                 ></input>
-                <button>submit</button>
+                <input type="submit"></input>
               </form>
             )}
           </div>
-          <div>
-            <b>Watchers :</b>
-            {this.state.watchers.join(" ")}
-            <div>
-              <button onClick={this.toggleWatchTask}>Watch this Task</button>
-            </div>
-          </div>
-          <div>
+
+          <div className="task-menu-status">
             <b>Status:</b>
             <select onChange={this.updateStatus} value={this.state.status}>
               <option value="New">New</option>
@@ -299,13 +293,24 @@ class UnconnedtedTaskPage extends Component {
                 .concat("-icon")}
             ></div>
           </div>
+          <div>
+            <div>
+              <b>Watchers :</b>
+            {this.state.watchers.join(" ")}
+            </div>
+            <div>
+              <button onClick={this.toggleWatchTask}>Watch this Task</button>
+            </div>
+          </div>
           {this.state.admin && (
             <div>
               <button onClick={this.handleDeleteTask}>Delete task</button>
             </div>
           )}
           <div>
-            <Link to={"/project/" + this.props.projectId}>Project Hub</Link>
+            <Link to={"/project/" + this.props.projectId}>
+              <b className="task-menu-project-hub">Project Hub</b>
+            </Link>
           </div>
         </div>
       </div>

@@ -47,10 +47,21 @@
   padding: 0 2vw;
 }
 
-.project-tasks h2 {
+.project-hub-no-tasks {
+  height: 3em;
+  border: 1px rgb(117, 117, 117) solid;
+  border-radius: 3px;
+  padding: 0em 1em 1em 1em;
+  margin-bottom: 1em;
+  background-color: rgb(248, 248, 248);
   display: flex;
   align-items: center;
+  justify-content: center;
 }
+.project-hub-no-tasks button {
+  background-color: rgb(248, 248, 248);
+}
+
 .project-hub-new-tasks,
 .project-hub-in-progress-tasks,
 .project-hub-on-hold-tasks,

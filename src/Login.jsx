@@ -8,7 +8,8 @@ class UnconnectedLogin extends Component {
     this.state = {
       username: "",
       password: "",
-      signup: false
+      signup: false,
+      errorMap: {}
     };
   }
   componentDidMount = () => {
@@ -40,6 +41,8 @@ class UnconnectedLogin extends Component {
       this.props.dispatch({ type: "login-success", user: body.user });
       this.getNotifications();
     }
+    this.putError("loginUsername");
+    this.putError("loginPassword");
     console.log("response body:", body);
   };
   getNotifications = async () => {
@@ -73,6 +76,18 @@ class UnconnectedLogin extends Component {
   closeSignup = () => {
     this.setState({ signup: false });
   };
+
+  putError = str => {
+    // console.log("Put error hit:", str);
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: true } });
+  };
+  getStyle = str => {
+    // console.log("get style error map:", this.state.errorMap);
+    if (this.state.errorMap[str]) {
+      return { borderBottom: "1px  rgb(187, 40, 40) solid" };
+    }
+  };
+
   render() {
     return (
       <div className="login-background">
@@ -87,6 +102,7 @@ class UnconnectedLogin extends Component {
                 <input
                   type="text"
                   onChange={this.handleUsernameChange}
+                  style={this.getStyle("loginUsername")}
                   required
                   placeholder="Username"
                 ></input>
@@ -95,6 +111,7 @@ class UnconnectedLogin extends Component {
                 <input
                   type="password"
                   onChange={this.handlePasswordChange}
+                  style={this.getStyle("loginPassword")}
                   placeholder="Password"
                   required
                 ></input>

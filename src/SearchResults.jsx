@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import TaskCard from "./TaskCard.jsx";
 
+import "./styling/SearchResults.css";
+
 class UnconnectedSearchResults extends Component {
   constructor(props) {
     super(props);
@@ -42,12 +44,26 @@ class UnconnectedSearchResults extends Component {
 
   render() {
     if (this.state.tasks.length === 0) {
-      return <div>No tasks found...</div>;
+      return (
+        <div className="search-results-body">
+          <div className="search-results-content">
+            <h2>Search Results</h2>
+            <h3 className="no-tasks-found">No tasks found...</h3>
+          </div>
+        </div>
+      );
     }
     let taskCardElems = this.state.tasks.map(task => {
       return <TaskCard task={task} projectId={task.pid}></TaskCard>;
     });
-    return <div>{taskCardElems}</div>;
+    return (
+      <div className="search-results-body">
+        <div className="search-results-content">
+          <h2>Search Results</h2>
+          <div>{taskCardElems}</div>
+        </div>
+      </div>
+    );
   }
 }
 

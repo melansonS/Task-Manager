@@ -1,18 +1,15 @@
-.todo-body {
+.no-tasks-found {
+  color: rgb(117, 117, 117);
+}
+
+.search-results-body {
   width: 60%;
   margin: auto;
 }
-.todo-collection {
+.search-results-content {
   border: 1px rgb(117, 117, 117) solid;
   border-radius: 3px;
   padding: 0em 1em 1em 1em;
   margin: 1em 0em;
   background-color: rgb(248, 248, 248);
-}
-
-.no-tasks {
-  color: rgb(117, 117, 117);
-  padding: 3em;
-  width: fit-content;
-  margin: 0 auto;
 }

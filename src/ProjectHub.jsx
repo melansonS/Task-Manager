@@ -14,7 +14,8 @@ class UnconnectedProjectHub extends Component {
       removeUserName: "",
       project: {},
       showNewTaskForm: false,
-      role: ""
+      role: "",
+      errorMap: {}
     };
   }
   componentDidMount() {
@@ -57,7 +58,7 @@ class UnconnectedProjectHub extends Component {
       this.state.project.admin.includes(this.state.addUserUsername)
     ) {
       window.alert("Already a user!");
-      this.setState({ addUserUsername: "" });
+      this.putError("addUser");
     } else {
       console.log("new User:", this.state.addUserUsername);
       let data = new FormData();
@@ -74,9 +75,11 @@ class UnconnectedProjectHub extends Component {
           users: this.state.project.users.concat(this.state.addUserUsername)
         };
         this.setState({ addUserUsername: "", project: updatedProject });
+        this.removeError("addUser");
       } else {
         window.alert("Invalid User");
-        this.setState({ addUserUsername: "" });
+        this.putError("addUser");
+        // this.setState({ addUserUsername: "" });
       }
     }
   };
@@ -88,12 +91,12 @@ class UnconnectedProjectHub extends Component {
     event.preventDefault();
     if (this.state.project.admin.includes(this.state.addAdminUsername)) {
       window.alert("Already an Admin!");
-      this.setState({ addAdminUsername: "" });
+      this.putError("addAdmin");
     } else if (
       !this.state.project.users.includes(this.state.addAdminUsername)
     ) {
       window.alert("Error, new admin must already be users on this project");
-      this.setState({ addAdminUsername: "" });
+      this.putError("addAdmin");
     } else {
       console.log("Adding Admin:", this.state.addAdminUsername);
       let data = new FormData();
@@ -111,6 +114,7 @@ class UnconnectedProjectHub extends Component {
         admin: this.state.project.admin.concat(this.state.addAdminUsername)
       };
       this.setState({ addAdminUsername: "", project: updatedProject });
+      this.removeError("addAdmin");
     }
   };
 
@@ -144,9 +148,10 @@ class UnconnectedProjectHub extends Component {
         })
       };
       this.setState({ removeUserName: "", project: updatedProject });
+      this.removeError("removeUser");
     } else {
       window.alert("Invalid user");
-      this.setState({ removeUserName: "" });
+      this.putError("removeUser");
     }
   };
 
@@ -163,8 +168,22 @@ class UnconnectedProjectHub extends Component {
     this.setState({ project: { ...this.state.project, tasks: newTasks } });
   };
 
+  putError = str => {
+    // console.log("Put error hit:", str);
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: true } });
+  };
+  removeError = str => {
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: false } });
+  };
+  getStyle = str => {
+    // console.log("get style error map:", this.state.errorMap);
+    if (this.state.errorMap[str]) {
+      return { borderBottom: "1px  rgb(187, 40, 40) solid" };
+    }
+  };
+
   render() {
-    console.log("this project:", this.state.project);
+    // console.log("this project:", this.state.project);
     if (this.state.project.admin === undefined) {
       return <div>Loading..</div>;
     }
@@ -246,6 +265,14 @@ class UnconnectedProjectHub extends Component {
         </div>
         <div className="project-hub-body">
           <div className="project-tasks">
+            {this.state.project.tasks.length <= 0 && (
+              <div className="project-hub-no-tasks">
+                Create a&nbsp;
+                <button onClick={this.handleShowNewTask}>New Task!</button> Get
+                this project started!
+              </div>
+            )}
+
             {newTasks.length > 0 && (
               <div className="project-hub-new-tasks">
                 <h2>New Tasks</h2>
@@ -303,6 +330,7 @@ class UnconnectedProjectHub extends Component {
                   <form onSubmit={this.handleAddUserSubmit}>
                     <input
                       required
+                      style={this.getStyle("addUser")}
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleAddUserUsername}
@@ -316,6 +344,7 @@ class UnconnectedProjectHub extends Component {
                   <form onSubmit={this.handleAddAdminSubmit}>
                     <input
                       required
+                      style={this.getStyle("addAdmin")}
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleAddAdminName}
@@ -329,6 +358,8 @@ class UnconnectedProjectHub extends Component {
                   <form onSubmit={this.handleRemoveUserSubmit}>
                     <input
                       required
+                      className="remove-user-input"
+                      style={this.getStyle("removeUser")}
                       type="text"
                       placeholder="user's name"
                       onChange={this.handleRemoveUserName}

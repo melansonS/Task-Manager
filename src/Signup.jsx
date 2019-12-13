@@ -8,7 +8,8 @@ class UnconnectedSignup extends Component {
     this.state = {
       username: "",
       password: "",
-      email: ""
+      email: "",
+      errorMap: {}
     };
   }
   handleUsernameChange = event => {
@@ -44,8 +45,23 @@ class UnconnectedSignup extends Component {
       this.props.history.push("/projects");
     } else if (body.usernameTake) {
       window.alert("Username already in use!");
+      this.putError("signupUsername");
     } else {
       window.alert("Something went wrong...");
+    }
+  };
+
+  putError = str => {
+    // console.log("Put error hit:", str);
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: true } });
+  };
+  removeError = str => {
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: false } });
+  };
+  getStyle = str => {
+    // console.log("get style error map:", this.state.errorMap);
+    if (this.state.errorMap[str]) {
+      return { borderBottom: "1px  rgb(187, 40, 40) solid" };
     }
   };
 
@@ -57,6 +73,7 @@ class UnconnectedSignup extends Component {
           <div>
             <input
               type="text"
+              style={this.getStyle("signupUsername")}
               onChange={this.handleUsernameChange}
               placeholder="Username"
               required

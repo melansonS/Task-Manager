@@ -77,7 +77,7 @@ class UnonnectedApp extends Component {
       taskName !== undefined
     ) {
       return <TaskPage projectId={projectId} taskName={taskName}></TaskPage>;
-    } else return <div>Invalid url...</div>;
+    } else return <h2 className="invalid-url">Invalid url...</h2>;
   };
 
   render = () => {
@@ -114,7 +114,7 @@ class UnonnectedApp extends Component {
             render={this.renderProjectHubOrTaskPage}
           ></Route>
           <Route path="/notifications" exact={true}>
-            <Notifications></Notifications>
+            <Notifications allNotifications={true}></Notifications>
           </Route>
         </BrowserRouter>
       );

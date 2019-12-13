@@ -32,9 +32,9 @@ class UnconnectedTodoPage extends Component {
   render() {
     if (this.state.todos.length === 0) {
       return (
-        <div className="no-tasks">
+        <h2 className="no-tasks">
           There are no tasks currently assined to you
-        </div>
+        </h2>
       );
     }
     let taskCardElems = [];

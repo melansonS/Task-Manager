@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(253, 253, 253);
+  background-color: white;
   margin: 0;
 }
 * {
@@ -14,12 +14,13 @@ input[type="submit"] {
   font-weight: bold;
   background-color: white;
   border: none;
+  border-radius: 3px;
   font-size: 16px;
   transition: all 0.3s ease;
 }
 input[type="submit"]:hover {
-  color: white;
-  background-color: #13293d;
+  color: #13293d;
+  background-color: rgb(214, 214, 214);
   cursor: pointer;
 }
 button {

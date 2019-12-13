@@ -61,7 +61,12 @@ class UnconnectedNotifications extends Component {
     }
   };
   render() {
-    let notificationElems = this.state.notifications.map(notification => {
+    let notifications = this.state.notifications;
+    if (!this.props.allNotifications) {
+      console.log(this.props.allNotifications);
+      notifications = notifications.slice(-10);
+    }
+    let notificationElems = notifications.map(notification => {
       let notifClass = "notification-unread";
       if (notification.read) {
         notifClass = "notification-read";
@@ -70,7 +75,9 @@ class UnconnectedNotifications extends Component {
         <Link
           to={notification.url}
           onClick={() => {
-            this.props.closeMenu();
+            if (!this.props.allNotifications) {
+              this.props.closeMenu();
+            }
             if (!notification.read) this.markAsRead(notification._id);
           }}
         >

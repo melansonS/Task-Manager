@@ -1,5 +1,6 @@
 .task-page {
-  width: 100%;
+  width: 98vw;
+  max-width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -16,9 +17,18 @@
 
 .task-posts {
   display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
 }
 .task-posts img {
-  height: 90px;
+  height: 7vw;
+  padding-right: 0.5em;
+}
+.task-posts img:hover {
+  cursor: pointer;
+}
+.task-posts h3 {
+  margin-top: 0;
 }
 .task-menu {
   padding-top: 3em;
@@ -64,4 +74,43 @@
 .due-date {
   box-sizing: border-box;
   height: 1.2em;
+}
+
+.img-modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+.img-modal-content {
+  border-radius: 3px;
+  background-color: #fefefe;
+  margin: 3% auto; /* 15% from the top and centered */
+  padding: 0.2em 0.2em 0 0.2em;
+  width: fit-content; /* Could be more or less, depending on screen size */
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-sizing: border-box;
+}
+.img-modal-content img {
+  max-width: 100%;
+  max-height: 89vh;
+  object-fit: contain;
+}
+.img-modal-content .close {
+  top: -0.2em;
+  right: -1em;
+}
+
+.invalid-url {
+  padding: 3em;
+  width: fit-content;
+  margin: 0 auto;
+  color: rgb(117, 117, 117);
 }

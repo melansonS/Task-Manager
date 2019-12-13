@@ -156,7 +156,6 @@ class UnconnectedProjectsPage extends Component {
                     onChange={this.handleTagsChange}
                     value={this.state.newProjectTags}
                     placeholder="List of Tags..."
-                    required
                   ></input>
                 </div>
                 <input type="submit"></input>

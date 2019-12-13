@@ -20,12 +20,20 @@ class UnconnedtedTaskPage extends Component {
       status: "",
       newDueDate: "",
       newDescription: "",
-      newAssignee: ""
+      newAssignee: "",
+      imgModalSrc: ""
     };
   }
   componentDidMount() {
     this.getTaskData();
+    document.addEventListener("click", this.handleModalClick);
   }
+  handleModalClick = event => {
+    let modal = document.getElementsByClassName("img-modal")[0];
+    if (event.target === modal) {
+      this.handleHideImgModal();
+    }
+  };
 
   componentDidUpdate = prevProps => {
     if (prevProps.taskName !== this.props.taskName) {
@@ -188,6 +196,12 @@ class UnconnedtedTaskPage extends Component {
       }
     }
   };
+  handleShowImgModal = img => {
+    this.setState({ imgModalSrc: img });
+  };
+  handleHideImgModal = () => {
+    this.setState({ imgModalSrc: "" });
+  };
 
   render() {
     if (this.state.task === undefined) {
@@ -197,7 +211,7 @@ class UnconnedtedTaskPage extends Component {
     if (this.state.task.posts.length > 0) {
       posts = this.state.task.posts.map((post, index) => {
         return (
-          <div>
+          <div onClick={() => this.handleShowImgModal(post)}>
             <img src={post}></img>
           </div>
         );
@@ -226,9 +240,19 @@ class UnconnedtedTaskPage extends Component {
           ></textarea>
           {/* Displays the images set upon task creation, if any were submitted */}
           {posts && (
-            <div className="task-posts">
+            <div className="task-posts-body">
               <h3>Posts:</h3>
-              {posts}
+              <div className="task-posts">{posts}</div>
+            </div>
+          )}
+          {this.state.imgModalSrc !== "" && (
+            <div className="img-modal">
+              <div className="img-modal-content">
+                <img src={this.state.imgModalSrc}></img>
+                <span className="close" onClick={this.handleHideImgModal}>
+                  X
+                </span>
+              </div>
             </div>
           )}
 
@@ -296,7 +320,7 @@ class UnconnedtedTaskPage extends Component {
           <div>
             <div>
               <b>Watchers :</b>
-            {this.state.watchers.join(" ")}
+              {this.state.watchers.join(" ")}
             </div>
             <div>
               <button onClick={this.toggleWatchTask}>Watch this Task</button>

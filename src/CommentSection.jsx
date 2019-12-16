@@ -62,7 +62,7 @@ class UnconnectedCommentSection extends Component {
               placeholder="Write a comment..."
               className="comment-box-text"
             ></input>
-            <input type="submit"></input>
+            <input type="submit" value="Submit"></input>
           </div>
         </form>
       </div>

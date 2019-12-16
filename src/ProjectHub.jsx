@@ -336,7 +336,7 @@ class UnconnectedProjectHub extends Component {
                       onChange={this.handleAddUserUsername}
                       value={this.state.addUserUsername}
                     ></input>
-                    <input type="submit"></input>
+                    <input type="submit" value="Submit"></input>
                   </form>
                 </div>
                 <div>
@@ -350,7 +350,7 @@ class UnconnectedProjectHub extends Component {
                       onChange={this.handleAddAdminName}
                       value={this.state.addAdminUsername}
                     ></input>
-                    <input type="submit"></input>
+                    <input type="submit" value="Submit"></input>
                   </form>
                 </div>
                 <div>
@@ -365,7 +365,7 @@ class UnconnectedProjectHub extends Component {
                       onChange={this.handleRemoveUserName}
                       value={this.state.removeUserName}
                     ></input>
-                    <input type="submit"></input>
+                    <input type="submit" value="Submit"></input>
                   </form>
                 </div>
               </div>

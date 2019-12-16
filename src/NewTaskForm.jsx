@@ -108,7 +108,7 @@ class UnconnectedNewTaskForm extends Component {
             </label>
           </div>
 
-          <input type="submit"></input>
+          <input type="submit" value="Submit"></input>
         </form>
       </div>
     );

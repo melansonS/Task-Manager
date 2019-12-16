@@ -158,7 +158,7 @@ class UnconnectedProjectsPage extends Component {
                     placeholder="List of Tags..."
                   ></input>
                 </div>
-                <input type="submit"></input>
+                <input type="submit" value="Submit"></input>
               </form>
 
               <div

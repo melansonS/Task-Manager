@@ -297,7 +297,7 @@ class UnconnedtedTaskPage extends Component {
                   onChange={this.handleAssigneeChange}
                   value={this.state.newAssignee}
                 ></input>
-                <input type="submit"></input>
+                <input type="submit" value="Submit"></input>
               </form>
             )}
           </div>

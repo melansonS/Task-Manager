@@ -155,7 +155,7 @@ class UnconnectedUserIcon extends Component {
                           required
                         ></input>
                       </div>
-                      <input type="submit"></input>
+                      <input type="submit" value="Submit"></input>
                     </form>
                     <h4>Update Password:</h4>
                     <form onSubmit={this.handlePasswordSubmit}>
@@ -175,7 +175,7 @@ class UnconnectedUserIcon extends Component {
                           placeholder="Confrim Password"
                         ></input>
                       </div>
-                      <input type="submit"></input>
+                      <input type="submit" value="Submit"></input>
                     </form>
                     <span onClick={this.handleMenuClose} className="close">
                       X

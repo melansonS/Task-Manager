@@ -399,7 +399,7 @@ app.post("/add-user", upload.none(), (req, res) => {
         .collection("projects")
         .updateOne({ _id: ObjectID(pid) }, { $push: { users: username } });
         //send the new user a notification
-    let notifMessage = `You have invited to colaborate on a new project: ${projectTitle}!`;
+    let notifMessage = `You have been invited to colaborate on a new project: ${projectTitle}!`;
     let notifUrl = "/project/" + pid
     let currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     let date = new Date().toLocaleDateString();

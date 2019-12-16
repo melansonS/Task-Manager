@@ -116,7 +116,7 @@ class UnconnectedLogin extends Component {
                   required
                 ></input>
               </div>
-              <input type="submit"></input>
+              <input type="submit" value="Submit"></input>
             </form>
             <button onClick={this.openSignup}>Signup</button>
             {this.state.signup && (

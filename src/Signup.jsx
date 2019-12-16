@@ -95,7 +95,7 @@ class UnconnectedSignup extends Component {
               required
             ></input>
           </div>
-          <input type="submit"></input>
+          <input type="submit" value="Submit"></input>
         </form>
       </div>
     );

@@ -60,6 +60,27 @@ class UnconnectedNotifications extends Component {
       });
     }
   };
+  getStyle = () => {
+    if (this.props.allNotifications) {
+      return { paddingLeft: "3em", width: "70vw" };
+    }
+  };
+
+  updatedUserData = async () => {
+    let response = await fetch("/auto-login", {
+      method: "POST",
+      credentials: "include"
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("AutoLogin:", body);
+    if (body.success) {
+      this.props.dispatch({ type: "login-success", user: body.user });
+      this.getNotifications();
+      this.notificationCheck();
+    }
+  };
+
   render() {
     let notifications = this.state.notifications;
     if (!this.props.allNotifications) {
@@ -79,6 +100,7 @@ class UnconnectedNotifications extends Component {
               this.props.closeMenu();
             }
             if (!notification.read) this.markAsRead(notification._id);
+            this.updatedUserData();
           }}
         >
           <div className={notifClass}>
@@ -90,7 +112,7 @@ class UnconnectedNotifications extends Component {
       );
     });
     return (
-      <div className="notifications-body">
+      <div className="notifications-body" style={this.getStyle()}>
         <h3>Notifications</h3>
         {notificationElems.reverse()}
       </div>

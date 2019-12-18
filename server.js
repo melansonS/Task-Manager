@@ -220,6 +220,32 @@ app.post("/new-project", upload.none(), (req, res) => {
   );
 });
 
+app.post("/delete-project",upload.none(),(req,res)=>{
+  console.log("DELETE PROJECT HIT")
+  let pid = req.body.projectId;
+  let admins = req.body.admin.split(",")
+  let users = req.body.users.split(",")
+  console.log("pid:",pid,"all users:",admins.concat(users))
+  let allUsers = admins.concat(users).filter(user => user !== "")
+  allUsers.forEach(username =>{
+    console.log("user:",username)
+    dbo.collection("users").findOne({username},(err,user)=>{
+      if(err){return res.send(JSON.stringify({success:false}))}
+      if(user === null){return}
+      let updatedProjects = {...user.projects}
+      delete updatedProjects[pid];
+      console.log(user,"projects:",updatedProjects)
+      dbo.collection("users").updateOne({username},{$set:{projects:updatedProjects}})
+    })
+  })
+  dbo.collection("projects").deleteOne({_id:ObjectID(pid)},(err,project)=>{
+    if(err){return res.send(JSON.stringify({success:false}))}
+    if(project === undefined){return res.send(JSON.stringify({success:false}))}
+    return res.send(JSON.stringify({success:true}))
+  })
+  // res.send(JSON.stringify({success:"in progress..."}))
+})
+
 app.post("/search", upload.none(), (req, res) => {
   console.log("SEARCH HIT ++");
   let searchInputs = req.body.searchInput.split(" ");

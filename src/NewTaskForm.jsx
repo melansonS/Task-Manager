@@ -10,7 +10,8 @@ class UnconnectedNewTaskForm extends Component {
       title: "",
       description: "",
       tags: "",
-      files: []
+      files: [],
+      errorMap: {}
     };
   }
   handleTitleChange = event => {
@@ -29,6 +30,14 @@ class UnconnectedNewTaskForm extends Component {
 
   handleNewTaskSubmit = async event => {
     event.preventDefault();
+    let existingTasks = this.props.projectTasks.map(task => {
+      return task.title;
+    });
+    if (existingTasks.includes(this.state.title)) {
+      console.log("Name taken!");
+      this.putError("task-title");
+      return window.alert("Task name already in use!");
+    }
     let data = new FormData();
     data.append("author", this.props.user.username);
     data.append("projectId", this.props.projectId);
@@ -51,6 +60,16 @@ class UnconnectedNewTaskForm extends Component {
     this.props.closeForm();
   };
 
+  putError = str => {
+    // console.log("Put error hit:", str);
+    this.setState({ errorMap: { ...this.state.errorMap, [str]: true } });
+  };
+  getStyle = str => {
+    if (this.state.errorMap[str]) {
+      return { borderBottom: "1px rgb(187, 40, 40) solid" };
+    }
+  };
+
   render() {
     let fileName = "";
     if (this.state.files[0] !== undefined) {
@@ -70,6 +89,7 @@ class UnconnectedNewTaskForm extends Component {
               onChange={this.handleTitleChange}
               value={this.state.title}
               placeholder="Title"
+              style={this.getStyle("task-title")}
             ></input>
           </div>
           <div>

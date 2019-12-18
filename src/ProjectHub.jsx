@@ -168,6 +168,26 @@ class UnconnectedProjectHub extends Component {
     this.setState({ project: { ...this.state.project, tasks: newTasks } });
   };
 
+  handleDeleteProject = async () => {
+    let confirmation = window.prompt(
+      "Please type the name of the project in order to confirm delettion"
+    );
+    if (confirmation === this.state.project.title) {
+      console.log("deleting project!");
+      let data = new FormData();
+      data.append("users", this.state.project.users);
+      data.append("admin", this.state.project.admin);
+      data.append("projectId", this.props.id);
+      let response = await fetch("/delete-project", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("delete project response body:", body);
+    }
+  };
+
   putError = str => {
     // console.log("Put error hit:", str);
     this.setState({ errorMap: { ...this.state.errorMap, [str]: true } });
@@ -319,6 +339,7 @@ class UnconnectedProjectHub extends Component {
                       </span>
                       <NewTaskForm
                         projectId={this.state.project._id}
+                        projectTasks={this.state.project.tasks}
                         updateTasks={this.updateTasks}
                         closeForm={this.handleCloseNewTaskForm}
                       ></NewTaskForm>
@@ -368,6 +389,10 @@ class UnconnectedProjectHub extends Component {
                     <input type="submit" value="Submit"></input>
                   </form>
                 </div>
+
+                <button onClick={this.handleDeleteProject}>
+                  Delete Project
+                </button>
               </div>
             )}
           </div>

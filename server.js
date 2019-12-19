@@ -7,6 +7,8 @@ let ObjectID = require("mongodb").ObjectID;
 let cookieParser = require("cookie-parser");
 let reloadMagic = require("./reload-magic.js");
 
+let mailer = require("nodemailer")
+
 app.use(cookieParser());
 reloadMagic(app);
 //mongo set up ====
@@ -42,6 +44,38 @@ let sendNotifications = (users, notification) =>{
         })
     })
     
+}
+let sendMail = (to, name, todos) =>{
+  let smtpTransport = mailer.createTransport({
+    service:"Gmail",
+    auth:{
+      user:"placeholdertodos@gmail.com",
+      pass:"strongPassword!"
+    }
+  })
+  let emailData = {
+    from:"Placeholder <placeholdertodos@gmail.com>",
+    to,
+    subject:"Daily Todos",
+    html:todosHTML(name,todos)
+  }
+  console.log("emailData HTML:",emailData.html)
+  smtpTransport.sendMail(emailData, (err,res)=>{
+    if(err){console.log(err)}
+    else{console.log("email successfully sent!")}
+    smtpTransport.close()
+  })
+}
+todosHTML = (name, todos)=>{
+  let todoLis = todos.map(todo=>{
+    return `<li>${todo}</li>`
+  })
+  return (`<div>
+    <h3>Hello ${name}</h3>
+    <br></br>
+    <h5>Here are your todos:</h5>
+    <ul>${todoLis}</ul>
+  </div>`)
 }
 
 // Your endpoints go after this line
@@ -904,6 +938,15 @@ app.post("/update-task-status", upload.none(), (req, res) => {
    return res.send(JSON.stringify({ success: true, statusUpdateComment }));
   });
 });
+
+app.post("/test-email",upload.none(),(req,res)=>{
+  console.log("TEST EMAIL HIT")
+  let name = req.body.name;
+  let email = req.body.email
+  sendMail(email, name, ["eat","sleep","repeat"])
+  console.log("TEST EMAIL >> username:",name," ,email:",email)
+  res.send(JSON.stringify({success:"inprogress..."}))
+})
 
 // Your endpoints go before this line
 

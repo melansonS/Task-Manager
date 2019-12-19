@@ -106,6 +106,16 @@ class UnconnectedUserIcon extends Component {
       window.alert("something went wrong...");
     }
   };
+  testEmail = async () => {
+    let data = new FormData();
+    data.append("name", this.props.user.username);
+    data.append("email", this.props.user.email);
+    let response = await fetch("/test-email", { method: "POST", body: data });
+    let body = await response.text();
+    body = JSON.parse(body);
+    console.log("test email response body:", body);
+  };
+
   render() {
     return (
       <div>
@@ -180,6 +190,9 @@ class UnconnectedUserIcon extends Component {
                     <span onClick={this.handleMenuClose} className="close">
                       X
                     </span>
+                    <button onClick={this.testEmail}>
+                      Send me email notifications!
+                    </button>
                   </div>
                 </div>
               )}

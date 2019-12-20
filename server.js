@@ -6,6 +6,7 @@ let MongoClient = require("mongodb").MongoClient;
 let ObjectID = require("mongodb").ObjectID;
 let cookieParser = require("cookie-parser");
 let reloadMagic = require("./reload-magic.js");
+let schedule = require("node-schedule")
 
 let mailer = require("nodemailer")
 
@@ -45,6 +46,56 @@ let sendNotifications = (users, notification) =>{
     })
     
 }
+//Setting up the email notification reccurence rules
+let emailReccurence = new schedule.RecurrenceRule();
+emailReccurence.dayOfWeek = [0,new schedule.Range(1,5)];
+emailReccurence.hour = 6;
+emailReccurence.minute = 0;
+// calling the function to start the email sending process
+let dailyEmailCall = schedule.scheduleJob(emailReccurence, ()=>{
+  console.log("DAILY EMAIL CALL!")
+  let userEmails = {}
+  let userTodos = {}
+  let userProjects = {}
+  let users = []
+  dbo.collection("notifications").findOne({name:"usersToEmail"},(err,obj)=>{
+    if(err){return console.log(err)}
+    users = Object.keys(obj.emailUsers)
+    userEmails = obj.emailUsers;
+    users.forEach(user =>{
+      dbo.collection("users").findOne({username:user},(err,userObj)=>{
+        if(err){return console.log(err)}
+        if(userObj === null){return console.log("userObj undefined")}
+        userProjects[user] = Object.keys(userObj.projects)      
+    //get todos for each user
+    let ids = userProjects[user].map(project => {
+      return ObjectID(project);
+    });
+    dbo
+      .collection("projects")
+      .find({ _id: { $in: ids } })
+      .toArray((err, projects) => {
+        if (err) {return console.log("ERR:", err)}
+        let todos = [];
+        projects.forEach(project => {
+          project.tasks.forEach(task => {
+            if (task.assignee === user) {
+              if (task.status !== "Completed") {
+                todos.push(task);
+              }
+            }
+          });
+        });
+        userTodos[user] = todos;        
+      sendMail(userEmails[user],user,userTodos[user])
+      });
+      })
+  })
+  })
+  
+})
+//
+//setting up the smtp, the emailData and sending the email!
 let sendMail = (to, name, todos) =>{
   let smtpTransport = mailer.createTransport({
     service:"Gmail",
@@ -67,9 +118,17 @@ let sendMail = (to, name, todos) =>{
   })
 }
 todosHTML = (name, todos)=>{
-  let todoLis = todos.map(todo=>{
-    return `<li>${todo}</li>`
+  let todoLis = `<li>You do not currently have any tasks on your to do list!</li>`
+  if(todos.length > 0){ todoLis = todos.map(todo=>{
+    return `<li>
+            <h4>${todo.title}</h4>
+            <i>
+              <p>Status: ${todo.status}</p>
+              <p>Due: ${todo.dueDate}</p>
+            </i>
+          </li>`
   })
+}
   return (`<div>
     <h3>Hello ${name}</h3>
     <br></br>
@@ -950,7 +1009,7 @@ app.post("/update-task-status", upload.none(), (req, res) => {
  })
 
  app.post("/email-notification-opt-in",upload.none(),(req,res)=>{
-   console.log("EMAIL OPT IN ")
+   console.log("EMAIL OPT IN :", req.body.email)
    let name = req.body.name;
    let email = req.body.email;
    dbo.collection("notifications").findOne({name:"usersToEmail"},(err,obj)=>{

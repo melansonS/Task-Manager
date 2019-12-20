@@ -14,13 +14,26 @@ class UnconnectedUserIcon extends Component {
       showUserSettings: false,
       newEmail: "",
       newPassword: "",
-      passwordConfirmation: ""
+      passwordConfirmation: "",
+      emailOptIn: false
     };
   }
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyDown);
     document.addEventListener("click", this.handleModalClick);
+    this.checkEmailOptIn();
   }
+  checkEmailOptIn = async () => {
+    let data = new FormData();
+    data.append("name", this.props.user.username);
+    let response = await fetch("/check-email-opt-in", {
+      method: "POST",
+      body: data
+    });
+    let body = await response.text();
+    body = JSON.parse(body);
+    this.setState({ emailOptIn: body.optIn });
+  };
 
   handleModalClick = event => {
     let modal = [];
@@ -106,14 +119,35 @@ class UnconnectedUserIcon extends Component {
       window.alert("something went wrong...");
     }
   };
-  testEmail = async () => {
+  testEmail = async event => {
     let data = new FormData();
     data.append("name", this.props.user.username);
     data.append("email", this.props.user.email);
-    let response = await fetch("/test-email", { method: "POST", body: data });
-    let body = await response.text();
-    body = JSON.parse(body);
-    console.log("test email response body:", body);
+    if (event.target.checked) {
+      console.log("send me emails");
+      let response = await fetch("/email-notification-opt-in", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("email opt in resposen body:", body);
+      if (body.success) {
+        this.setState({ emailOptIn: !this.state.emailOptIn });
+      }
+    } else {
+      console.log("don't send me emails");
+      let response = await fetch("/email-notification-opt-out", {
+        method: "POST",
+        body: data
+      });
+      let body = await response.text();
+      body = JSON.parse(body);
+      console.log("email opt out resposen body:", body);
+      if (body.success) {
+        this.setState({ emailOptIn: !this.state.emailOptIn });
+      }
+    }
   };
 
   render() {
@@ -190,9 +224,14 @@ class UnconnectedUserIcon extends Component {
                     <span onClick={this.handleMenuClose} className="close">
                       X
                     </span>
-                    <button onClick={this.testEmail}>
-                      Send me email notifications!
-                    </button>
+                    <div>
+                      <h4>Send me email notifications!</h4>
+                      <input
+                        type="checkbox"
+                        checked={this.state.emailOptIn}
+                        onChange={this.testEmail}
+                      ></input>
+                    </div>
                   </div>
                 </div>
               )}

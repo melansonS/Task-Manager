@@ -938,7 +938,41 @@ app.post("/update-task-status", upload.none(), (req, res) => {
    return res.send(JSON.stringify({ success: true, statusUpdateComment }));
   });
 });
+ app.post("/check-email-opt-in",upload.none(),(req,res)=>{
+  let name = req.body.name;
+  dbo.collection("notifications").findOne({name:"usersToEmail"},(err,obj)=>{
+    if(err){return res.send(JSON.stringify({succes:false}))}
+    if(obj.emailUsers[name]){
+      return res.send(JSON.stringify({success:true,optIn:true}))
+    }
+    return res.send(JSON.stringify({success:true,optIn:false}))
+  })
+ })
 
+ app.post("/email-notification-opt-in",upload.none(),(req,res)=>{
+   console.log("EMAIL OPT IN ")
+   let name = req.body.name;
+   let email = req.body.email;
+   dbo.collection("notifications").findOne({name:"usersToEmail"},(err,obj)=>{
+     if(err){return res.send(JSON.stringify({success:false}))}
+      let updatedUsers = obj.emailUsers;
+      updatedUsers[name] = email;
+      dbo.collection("notifications").updateOne({name:"usersToEmail"},{$set:{emailUsers:updatedUsers}})
+      res.send(JSON.stringify({success:true}))
+   })
+ })
+ app.post("/email-notification-opt-out",upload.none(),(req,res)=>{
+   console.log("EMAIL OPT OUT ")
+   let name = req.body.name;
+   let email = req.body.email;
+   dbo.collection("notifications").findOne({name:"usersToEmail"},(err,obj)=>{
+     if(err){return res.send(JSON.stringify({success:false}))}
+      let updatedUsers = obj.emailUsers;
+      delete updatedUsers[name]
+      dbo.collection("notifications").updateOne({name:"usersToEmail"},{$set:{emailUsers:updatedUsers}})
+      res.send(JSON.stringify({success:true}))
+   })
+ })
 app.post("/test-email",upload.none(),(req,res)=>{
   console.log("TEST EMAIL HIT")
   let name = req.body.name;

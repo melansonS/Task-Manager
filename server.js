@@ -118,21 +118,26 @@ let sendMail = (to, name, todos) =>{
   })
 }
 todosHTML = (name, todos)=>{
-  let todoLis = `<li>You do not currently have any tasks on your to do list!</li>`
-  if(todos.length > 0){ todoLis = todos.map(todo=>{
-    return `<li>
-            <h4>${todo.title}</h4>
-            <i>
-              <p>Status: ${todo.status}</p>
-              <p>Due: ${todo.dueDate}</p>
-            </i>
-          </li>`
-  })
-}
+  let todoLis = ""
+  if(todos.length > 0){ todos.forEach(todo=>{
+    todoLis += `<div>
+              <li>
+                <h4 style='margin-bottom:0px'>${todo.title}</h4>
+                <i>
+                  <p style='margin-top:0px'>Status: ${todo.status} - Due: ${todo.dueDate}</p>
+                </i>
+              </li>
+            </div>`
+    })
+  }else{
+      todoLis = `<li>You do not currently have any tasks on your to do list!</li>`
+    }
   return (`<div>
+    <img src="https://placeholder.com/wp-content/uploads/2018/10/placeholder.com-logo3.png" alt="placeholder logo" style='height:50px'/>
+    <br>
     <h3>Hello ${name}</h3>
-    <br></br>
-    <h5>Here are your todos:</h5>
+    
+    <h4>Here are your todos:</h4>
     <ul>${todoLis}</ul>
   </div>`)
 }
@@ -1032,14 +1037,6 @@ app.post("/update-task-status", upload.none(), (req, res) => {
       res.send(JSON.stringify({success:true}))
    })
  })
-app.post("/test-email",upload.none(),(req,res)=>{
-  console.log("TEST EMAIL HIT")
-  let name = req.body.name;
-  let email = req.body.email
-  sendMail(email, name, ["eat","sleep","repeat"])
-  console.log("TEST EMAIL >> username:",name," ,email:",email)
-  res.send(JSON.stringify({success:"inprogress..."}))
-})
 
 // Your endpoints go before this line
 

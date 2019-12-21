@@ -224,14 +224,14 @@ class UnconnectedUserIcon extends Component {
                     <span onClick={this.handleMenuClose} className="close">
                       X
                     </span>
-                    <div>
+                    <span>
                       <h4>Send me email notifications!</h4>
                       <input
                         type="checkbox"
                         checked={this.state.emailOptIn}
                         onChange={this.testEmail}
                       ></input>
-                    </div>
+                    </span>
                   </div>
                 </div>
               )}

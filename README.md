@@ -6,7 +6,7 @@ Built using React.js, Redux, Node.js, Express, MongoDB, Multer, Nodemailer, Node
 
 **Demo**: _https://www.youtube.com/watch?v=yYG1loDpA0w_
 
-**Try it out here:** _to be added!_
+**Try it out here:** _https://placeholdertm.herokuapp.com/projects_
 
 _Credentials:_
  * _Username: foo_

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import "./styling/commentSection.css";
+import "./styling/CommentSection.css";
 
 class UnconnectedCommentSection extends Component {
   constructor(props) {

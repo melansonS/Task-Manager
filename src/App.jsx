@@ -95,9 +95,7 @@ class UnonnectedApp extends Component {
         <BrowserRouter>
           <Navbar></Navbar>
           <Route path="/" exact={true}>
-            <div>
-              <h1>HOMEPAGE</h1>
-            </div>
+            <ProjectsPage></ProjectsPage>
           </Route>
           <Route path="/projects" exact={true}>
             <ProjectsPage></ProjectsPage>

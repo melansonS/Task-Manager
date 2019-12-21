@@ -48,9 +48,9 @@ let sendNotifications = (users, notification) =>{
 }
 //Setting up the email notification reccurence rules
 let emailReccurence = new schedule.RecurrenceRule();
-emailReccurence.dayOfWeek = [0,new schedule.Range(1,5)];
-emailReccurence.hour = 6;
-emailReccurence.minute = 0;
+emailReccurence.dayOfWeek = [0,new schedule.Range(1,6)];
+emailReccurence.hour = 12;
+emailReccurence.minute = 8;
 // calling the function to start the email sending process
 let dailyEmailCall = schedule.scheduleJob(emailReccurence, ()=>{
   console.log("DAILY EMAIL CALL!")
@@ -137,7 +137,7 @@ todosHTML = (name, todos)=>{
     <br>
     <h3>Hello ${name}</h3>
     
-    <h4>Here are your todos:</h4>
+    <h4>Here are your <a href="https://placeholdertm.herokuapp.com/todo">todos</a>:</h4>
     <ul>${todoLis}</ul>
   </div>`)
 }

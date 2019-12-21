@@ -24,7 +24,7 @@ class UnconnectedTodoPage extends Component {
     let response = await fetch("/get-todos", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("get todos response body:", body);
+    // console.log("get todos response body:", body);
     if (body.success) {
       this.setState({ todos: body.todos });
     }

@@ -126,7 +126,10 @@
   margin-block-end: 1.33em;
   width: 18vw;
 }
-
+.user-settings-modal-content-email-checkbox {
+  display: flex;
+  align-items: center;
+}
 .navbar-search {
   position: absolute;
   right: 3em;

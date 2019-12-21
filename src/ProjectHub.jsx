@@ -35,7 +35,7 @@ class UnconnectedProjectHub extends Component {
     let response = await fetch("/get-projects", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log(body);
+    // console.log(body);
     if (body.success) {
       let projectRole = "";
       if (body.userProjects[0].admin.includes(this.props.user.username)) {
@@ -60,7 +60,7 @@ class UnconnectedProjectHub extends Component {
       window.alert("Already a user!");
       this.putError("addUser");
     } else {
-      console.log("new User:", this.state.addUserUsername);
+      // console.log("new User:", this.state.addUserUsername);
       let data = new FormData();
       data.append("username", this.state.addUserUsername);
       data.append("projectId", this.props.id);
@@ -68,7 +68,7 @@ class UnconnectedProjectHub extends Component {
       let response = await fetch("/add-user", { method: "POST", body: data });
       let body = await response.text();
       body = JSON.parse(body);
-      console.log(body);
+      // console.log(body);
       if (body.success) {
         let updatedProject = {
           ...this.state.project,
@@ -98,14 +98,14 @@ class UnconnectedProjectHub extends Component {
       window.alert("Error, new admin must already be users on this project");
       this.putError("addAdmin");
     } else {
-      console.log("Adding Admin:", this.state.addAdminUsername);
+      // console.log("Adding Admin:", this.state.addAdminUsername);
       let data = new FormData();
       data.append("projectId", this.state.project._id);
       data.append("newAdmin", this.state.addAdminUsername);
       let response = await fetch("/add-admin", { method: "POST", body: data });
       let body = await response.text();
       body = JSON.parse(body);
-      console.log("Add admin response body:", body);
+      // console.log("Add admin response body:", body);
       let updatedProject = {
         ...this.state.project,
         users: this.state.project.users.filter(user => {
@@ -127,7 +127,7 @@ class UnconnectedProjectHub extends Component {
       this.state.project.users.includes(this.state.removeUserName) ||
       this.state.project.admin.includes(this.state.removeUserName)
     ) {
-      console.log("removing ", this.state.removeUserName);
+      // console.log("removing ", this.state.removeUserName);
       let data = new FormData();
       data.append("removeUser", this.state.removeUserName);
       data.append("projectId", this.state.project._id);
@@ -164,7 +164,7 @@ class UnconnectedProjectHub extends Component {
 
   //method passed to the new task form in order to rerender the project hub with the newly added task
   updateTasks = newTasks => {
-    console.log("in update tasks, newTasks:", newTasks);
+    // console.log("in update tasks, newTasks:", newTasks);
     this.setState({ project: { ...this.state.project, tasks: newTasks } });
   };
 
@@ -173,7 +173,7 @@ class UnconnectedProjectHub extends Component {
       "Please type the name of the project in order to confirm delettion"
     );
     if (confirmation === this.state.project.title) {
-      console.log("deleting project!");
+      // console.log("deleting project!");
       let data = new FormData();
       data.append("users", this.state.project.users);
       data.append("admin", this.state.project.admin);
@@ -184,7 +184,7 @@ class UnconnectedProjectHub extends Component {
       });
       let body = await response.text();
       body = JSON.parse(body);
-      console.log("delete project response body:", body);
+      // console.log("delete project response body:", body);
     }
   };
 

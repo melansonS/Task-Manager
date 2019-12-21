@@ -14,7 +14,7 @@ class UnconnectedNotifications extends Component {
     this.getNotifications();
   }
   getNotifications = async () => {
-    console.log("notifications mount");
+    // console.log("notifications mount");
     let data = new FormData();
     data.append("user", this.props.user.username);
     let response = await fetch("/get-notifications", {
@@ -23,7 +23,7 @@ class UnconnectedNotifications extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("get notifications reponse body:", body);
+    // console.log("get notifications reponse body:", body);
     if (body.success) {
       this.setState({ notifications: body.notificationsArr });
       let unreadNotifications = 0;
@@ -45,7 +45,7 @@ class UnconnectedNotifications extends Component {
     let response = await fetch("/mark-as-read", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("mark as read response body:", body);
+    // console.log("mark as read response body:", body);
     if (body.success) {
       this.setState({ notifications: body.notificationsArr });
       let unreadNotifications = 0;
@@ -73,7 +73,7 @@ class UnconnectedNotifications extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("AutoLogin:", body);
+    // console.log("AutoLogin:", body);
     if (body.success) {
       this.props.dispatch({ type: "login-success", user: body.user });
       this.getNotifications();
@@ -84,7 +84,7 @@ class UnconnectedNotifications extends Component {
   render() {
     let notifications = this.state.notifications;
     if (!this.props.allNotifications) {
-      console.log(this.props.allNotifications);
+      // console.log(this.props.allNotifications);
       notifications = notifications.slice(-10);
     }
     let notificationElems = notifications.map(notification => {

@@ -18,7 +18,7 @@ class UnconnectedCommentSection extends Component {
     if (this.state.newComment === "") {
       return;
     }
-    console.log("Uploading comment:", this.state.newComment);
+    // console.log("Uploading comment:", this.state.newComment);
     let data = new FormData();
     data.append("projectId", this.props.task.pid);
     data.append("taskName", this.props.task.title);
@@ -27,7 +27,7 @@ class UnconnectedCommentSection extends Component {
     let response = await fetch("/add-comment", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("comment submit response body:", body);
+    // console.log("comment submit response body:", body);
     if (body.success) {
       this.setState({ newComment: "" });
       this.props.renderComments(body.modifiedTask);

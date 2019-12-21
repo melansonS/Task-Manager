@@ -34,7 +34,7 @@ class UnconnectedSignup extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     if (body.success) {
-      console.log("signup successful!");
+      // console.log("signup successful!");
       let user = {
         username: this.state.username,
         password: this.state.password,

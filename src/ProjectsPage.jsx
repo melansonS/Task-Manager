@@ -32,7 +32,7 @@ class UnconnectedProjectsPage extends Component {
   };
 
   getProjects = async () => {
-    console.log("Getting user's projects:", this.props.user.projects);
+    // console.log("Getting user's projects:", this.props.user.projects);
     let projectIds = Object.keys(this.props.user.projects);
     let data = new FormData();
     data.append("projectIds", projectIds);
@@ -42,19 +42,19 @@ class UnconnectedProjectsPage extends Component {
     let adminProjects = body.userProjects.filter(project => {
       return project.admin.includes(this.props.user.username);
     });
-    console.log("adminProjects:", adminProjects);
+    // console.log("adminProjects:", adminProjects);
     let userProjects = body.userProjects.filter(project => {
       return project.users.includes(this.props.user.username);
     });
-    console.log("userProjects", userProjects);
+    // console.log("userProjects", userProjects);
     this.setState({ adminProjects, userProjects });
 
-    console.log(" admin projects in the sate:", this.state.adminProjects);
-    console.log(" user projects in the sate:", this.state.userProjects);
+    // console.log(" admin projects in the sate:", this.state.adminProjects);
+    // console.log(" user projects in the sate:", this.state.userProjects);
   };
 
   handleStartProject = () => {
-    console.log("startprojectClick");
+    // console.log("startprojectClick");
     this.setState({ showStartProjectForm: true });
   };
   handleHideProjectForm = () => {
@@ -80,7 +80,7 @@ class UnconnectedProjectsPage extends Component {
     let response = await fetch("/new-project", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("start project response body:", body);
+    // console.log("start project response body:", body);
     if (body.success) {
       let updatedAdminProjects = this.state.adminProjects.concat(
         body.newProject

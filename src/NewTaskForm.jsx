@@ -24,7 +24,7 @@ class UnconnectedNewTaskForm extends Component {
     this.setState({ tags: event.target.value });
   };
   handleFileChange = event => {
-    console.log("files:", event.target.files);
+    // console.log("files:", event.target.files);
     this.setState({ files: event.target.files });
   };
 
@@ -34,7 +34,7 @@ class UnconnectedNewTaskForm extends Component {
       return task.title;
     });
     if (existingTasks.includes(this.state.title)) {
-      console.log("Name taken!");
+      // console.log("Name taken!");
       this.putError("task-title");
       return window.alert("Task name already in use!");
     }
@@ -55,7 +55,7 @@ class UnconnectedNewTaskForm extends Component {
     let body = await response.text();
     body = JSON.parse(body);
     this.setState({ title: "", description: "", tags: "", files: [] });
-    console.log("new task response body->", body);
+    // console.log("new task response body->", body);
     this.props.updateTasks(body.newTasksArr);
     this.props.closeForm();
   };
@@ -73,7 +73,7 @@ class UnconnectedNewTaskForm extends Component {
   render() {
     let fileName = "";
     if (this.state.files[0] !== undefined) {
-      console.log("thiis . state . files:", this.state.files[0].name);
+      // console.log("thiis . state . files:", this.state.files[0].name);
       Object.values(this.state.files).forEach(file => {
         fileName += " " + file.name;
       });

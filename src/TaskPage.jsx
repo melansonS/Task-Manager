@@ -37,7 +37,7 @@ class UnconnedtedTaskPage extends Component {
 
   componentDidUpdate = prevProps => {
     if (prevProps.taskName !== this.props.taskName) {
-      console.log("updating url");
+      // console.log("updating url");
       this.getTaskData();
     }
   };
@@ -48,7 +48,7 @@ class UnconnedtedTaskPage extends Component {
     let response = await fetch("/task-data", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("get task data response body:", body);
+    // console.log("get task data response body:", body);
     if (body.success) {
       this.setState({
         task: body.taskData,
@@ -58,9 +58,9 @@ class UnconnedtedTaskPage extends Component {
         newDescription: body.taskData.description,
         newDueDate: body.taskData.dueDate
       });
-      console.log("task.description:", this.state.task.description);
+      // console.log("task.description:", this.state.task.description);
       if (this.props.user.projects[this.props.projectId] === "admin") {
-        console.log("is admin!");
+        // console.log("is admin!");
         this.setState({ admin: true });
       }
     }
@@ -70,7 +70,7 @@ class UnconnedtedTaskPage extends Component {
   };
   handleAssignTo = async event => {
     event.preventDefault();
-    console.log("assigning to :", this.state.newAssignee);
+    // console.log("assigning to :", this.state.newAssignee);
     let data = new FormData();
     data.append("assignee", this.state.newAssignee);
     data.append("projectId", this.props.projectId);
@@ -82,13 +82,13 @@ class UnconnedtedTaskPage extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("reassign response body:", body);
+    // console.log("reassign response body:", body);
     if (body.success) {
       this.setState({ assignee: this.state.newAssignee, newAssignee: "" });
     }
   };
   handleDateChange = async date => {
-    console.log("updating due date! :", date.toLocaleDateString());
+    // console.log("updating due date! :", date.toLocaleDateString());
     let data = new FormData();
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
@@ -99,7 +99,7 @@ class UnconnedtedTaskPage extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("update due date response body:", body);
+    // console.log("update due date response body:", body);
     this.setState({
       newDueDate: date.toLocaleDateString()
     });
@@ -109,8 +109,7 @@ class UnconnedtedTaskPage extends Component {
   };
 
   submitDescription = event => {
-    // event.preventDefault();
-    console.log(this.state.newDescription);
+    // console.log(this.state.newDescription);
     let data = new FormData();
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
@@ -121,7 +120,7 @@ class UnconnedtedTaskPage extends Component {
     });
   };
   toggleWatchTask = async event => {
-    console.log("Toggle Watching");
+    // console.log("Toggle Watching");
     let user = this.props.user.username;
     let data = new FormData();
     data.append("projectId", this.props.projectId);
@@ -133,7 +132,7 @@ class UnconnedtedTaskPage extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("toggle watching response body:", body);
+    // console.log("toggle watching response body:", body);
     if (body.success) {
       if (this.state.watchers.includes(user)) {
         this.setState({
@@ -149,7 +148,7 @@ class UnconnedtedTaskPage extends Component {
 
   updateStatus = async event => {
     let newStatus = event.target.value;
-    console.log("update Status select:", newStatus);
+    // console.log("update Status select:", newStatus);
     let data = new FormData();
     data.append("projectId", this.props.projectId);
     data.append("taskName", this.props.taskName);
@@ -167,7 +166,7 @@ class UnconnedtedTaskPage extends Component {
         body.statusUpdateComment
       );
       this.setState({ status: newStatus, task: updatedTask });
-      console.log(body);
+      // console.log(body);
     }
   };
   //method passed to the comment section component to render the new comments on submit
@@ -180,7 +179,7 @@ class UnconnedtedTaskPage extends Component {
       "Confirm deletion by typing out the name of the Task:"
     );
     if (nameConfirmation === this.state.task.title) {
-      console.log("deleting task!");
+      // console.log("deleting task!");
       let data = new FormData();
       data.append("projectId", this.props.projectId);
       data.append("taskName", this.props.taskName);
@@ -190,7 +189,7 @@ class UnconnedtedTaskPage extends Component {
       });
       let body = await response.text();
       body = JSON.parse(body);
-      console.log("delete task response body:", body);
+      // console.log("delete task response body:", body);
       if (body.success) {
         this.props.history.push("/project/" + this.props.projectId);
       }
@@ -232,7 +231,7 @@ class UnconnedtedTaskPage extends Component {
             onBlur={() => {
               if (this.state.admin) {
                 if (this.state.newDescription !== this.state.task.description) {
-                  console.log("updating description on blur!");
+                  // console.log("updating description on blur!");
                   this.submitDescription();
                 }
               }

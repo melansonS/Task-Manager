@@ -23,7 +23,7 @@ class UnconnectedSearchResults extends Component {
       return;
     }
 
-    console.log("searching for:", this.props.search);
+    // console.log("searching for:", this.props.search);
     let data = new FormData();
     data.append("searchInput", this.props.search);
     data.append("projectIds", Object.keys(this.props.user.projects));
@@ -31,7 +31,7 @@ class UnconnectedSearchResults extends Component {
     let response = await fetch("/search", { method: "POST", body: data });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("search respnse body:", body);
+    // console.log("search respnse body:", body);
     if (body.success) {
       this.setState({ tasks: body.searchResults });
     }

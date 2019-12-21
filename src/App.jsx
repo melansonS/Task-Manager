@@ -21,7 +21,7 @@ class UnonnectedApp extends Component {
     });
     let body = await response.text();
     body = JSON.parse(body);
-    console.log("AutoLogin:", body);
+    // console.log("AutoLogin:", body);
     if (body.success) {
       this.props.dispatch({ type: "login-success", user: body.user });
       this.getNotifications();
@@ -65,7 +65,7 @@ class UnonnectedApp extends Component {
     let id = routerData.match.params.projectId.split("-");
     let projectId = id[0];
     let taskName = id[1];
-    console.log("pid:", projectId, " taskName:", taskName);
+    // console.log("pid:", projectId, " taskName:", taskName);
     if (
       this.props.user.projects[projectId] !== undefined &&
       taskName === undefined

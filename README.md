@@ -4,11 +4,11 @@ Placeholder is a task management web app that allows users to create and collabo
 
 Built using React.js, Redux, Node.js, Express, MongoDB, Multer, Nodemailer, Node-Schedule, HTML and CSS.
 
-**Demo**: https://www.youtube.com/watch?v=yYG1loDpA0w
+**Demo**: _https://www.youtube.com/watch?v=yYG1loDpA0w_
 
-_Try it out here: *to be added!_
+**Try it out here:** _to be added!_
 
-Credentials: 
- *_Username: foo_
-  *_Password: bar_
+_Credentials:_
+ * _Username: foo_
+  * _Password: bar_
 
